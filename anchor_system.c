@@ -348,19 +348,26 @@ int snap_sizing(HWND hwnd,RECT *rect,int side)
 	return result;
 }
 #define GRIPPIE_SQUARE_SIZE 15
-int create_grippy(HWND hwnd)
+int create_grippy(HWND hwnd,HWND *hgrippy)
 {
+	int result=FALSE;
 	RECT client_rect;
+	HWND htmp;
 	GetClientRect(hwnd,&client_rect);
 	
-	return CreateWindow(TEXT("Scrollbar"),NULL,WS_CHILD|WS_VISIBLE|SBS_SIZEGRIP,
+	htmp=CreateWindow(TEXT("Scrollbar"),NULL,WS_CHILD|WS_VISIBLE|SBS_SIZEGRIP,
 		client_rect.right-GRIPPIE_SQUARE_SIZE,
 		client_rect.bottom-GRIPPIE_SQUARE_SIZE,
 		GRIPPIE_SQUARE_SIZE,GRIPPIE_SQUARE_SIZE,
 		hwnd,NULL,NULL,NULL);
+	if(hgrippy!=0){
+		*hgrippy=htmp;
+		result=TRUE;
+	}
+	return result;
 }
 
-int grippy_move(HWND hwnd,HWND grippy)
+int move_grippy(HWND hwnd,HWND grippy)
 {
 	RECT client_rect;
 	GetClientRect(hwnd,&client_rect);
@@ -388,19 +395,26 @@ int resize_ini_win(HWND hwnd)
 	return anchor_resize(hwnd,ini_win_anchor,sizeof(ini_win_anchor)/sizeof(struct CONTROL_ANCHOR));
 }
 
-/*
-struct CONTROL_ANCHOR ini_win_anchor[]={
-	{IDC_TXT_LOCAL,ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP,0,0,0},
-	{IDC_TXT_APPDATA,ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP,0,0,0},
-	{IDC_INSTALL_INFO,ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP,0,0,0}
-};
-int init_ini_win_anchor(HWND hwnd)
-{
-	return anchor_init(hwnd,ini_win_anchor,sizeof(ini_win_anchor)/sizeof(struct CONTROL_ANCHOR));
-}
-int resize_ini_win(HWND hwnd)
-{
-	return anchor_resize(hwnd,ini_win_anchor,sizeof(ini_win_anchor)/sizeof(struct CONTROL_ANCHOR));
-}
 
-*/
+
+int resize_main_dlg(HWND hwnd,int style)
+{
+	extern HWND ghfileview1,ghfileview2;
+	int result=FALSE;
+	RECT rect={0};
+	int x,y,w,h;
+	if(0==ghfileview1)
+		return result;
+	if(0==ghfileview2)
+		return result;
+	GetClientRect(hwnd,&rect);
+	x=0;
+	y=40;
+	w=rect.right/2;
+	h=rect.bottom-y;
+	SetWindowPos(ghfileview1,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
+	x=w+5;
+	w=rect.right-x;
+	SetWindowPos(ghfileview2,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
+	return result;
+}

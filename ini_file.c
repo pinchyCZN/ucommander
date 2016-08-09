@@ -5,7 +5,7 @@
 #include <Shlobj.h>
 #include "resource.h"
 
-#define APP_NAME "SR_FREE"
+#define APP_NAME TEXT("ucommander")
 #include "ram_ini_file.h"
 char ini_file[MAX_PATH]={0};
 int is_path_directory_wc(WCHAR *path)
@@ -31,7 +31,7 @@ int get_ini_value(char *section,char *key,int *val)
 	char str[255]={0};
 	int result=0;
 	if(ini_file[0]!=0){
-		result=GetPrivateProfileString(section,key,"",str,sizeof(str),ini_file);
+		result=GetPrivateProfileStringA(section,key,"",str,sizeof(str),ini_file);
 		if(str[0]!=0)
 			*val=atoi(str);
 	}
@@ -47,7 +47,7 @@ int get_ini_str(char *section,char *key,char *str,int size)
 	int result=0;
 	char tmpstr[1024]={0};
 	if(ini_file[0]!=0){
-		result=GetPrivateProfileString(section,key,"",tmpstr,sizeof(tmpstr),ini_file);
+		result=GetPrivateProfileStringA(section,key,"",tmpstr,sizeof(tmpstr),ini_file);
 		if(result>0)
 			strncpy(str,tmpstr,size);
 	}else{
@@ -60,14 +60,14 @@ int get_ini_str(char *section,char *key,char *str,int size)
 int delete_ini_key(char *section,char *key)
 {
 	if(ini_file[0]!=0)
-		return WritePrivateProfileString(section,key,NULL,ini_file);
+		return WritePrivateProfileStringA(section,key,NULL,ini_file);
 	else
 		return write_private_profile_string(section,key,NULL,&ram_ini);
 }
 int delete_ini_section(char *section)
 {
 	if(ini_file[0]!=0)
-		return WritePrivateProfileString(section,NULL,NULL,ini_file);
+		return WritePrivateProfileStringA(section,NULL,NULL,ini_file);
 	else
 		return write_private_profile_string(section,NULL,NULL,&ram_ini);
 }
@@ -76,7 +76,7 @@ int write_ini_value(char *section,char *key,int val)
 	char str[20]={0};
 	_snprintf(str,sizeof(str),"%i",val);
 	if(ini_file[0]!=0){
-		if(WritePrivateProfileString(section,key,str,ini_file)!=0)
+		if(WritePrivateProfileStringA(section,key,str,ini_file)!=0)
 			return TRUE;
 		else
 			return FALSE;
@@ -91,7 +91,7 @@ int write_ini_value(char *section,char *key,int val)
 int write_ini_str(char *section,char *key,char *str)
 {
 	if(ini_file[0]!=0){
-		if(WritePrivateProfileString(section,key,str,ini_file)!=0)
+		if(WritePrivateProfileStringA(section,key,str,ini_file)!=0)
 			return TRUE;
 		else
 			return FALSE;
@@ -178,7 +178,7 @@ LRESULT CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	static char *path_param=0;
 	static char local_path[MAX_PATH]={0};
 	static char appdata_path[MAX_PATH]={0};
-	static HWND grippy=0;
+	static HWND hgrippy=0;
 	switch(msg){
 	case WM_INITDIALOG:
 		{
@@ -190,7 +190,7 @@ LRESULT CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			appdata_path[0]=0;
 			get_appdata_folder(appdata_path,sizeof(appdata_path));
 			SetWindowText(GetDlgItem(hwnd,IDC_TXT_APPDATA),appdata_path);
-			grippy=create_grippy(hwnd);
+			create_grippy(hwnd,&hgrippy);
 			init_ini_win_anchor(hwnd);
 			if(GetWindowRect(GetDesktopWindow(),&rect)!=0){
 				int cx,cy;
@@ -206,7 +206,7 @@ LRESULT CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		}
 		break;
 	case WM_SIZE:
-		grippy_move(hwnd,grippy);
+		move_grippy(hwnd,hgrippy);
 		resize_ini_win(hwnd);
 		break;
 	case WM_COMMAND:

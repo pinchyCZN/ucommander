@@ -11,6 +11,7 @@ HINSTANCE ghinstance=0;
 HWND ghmain=0;
 HMENU ghmainmenu=0;
 HWND ghfileview1=0,ghfileview2=0;
+int gstyle=0;
 
 int create_listview(HWND hparent,HWND *hlview,int idc,int counter)
 {
@@ -78,7 +79,7 @@ int resize_fileview(HWND hwnd)
 	htmp=GetDlgItem(hwnd,IDC_LVIEW);
 	x=0;
 	y+=h+2;
-	w=rect.right;
+	w=rect.right/2;
 	h=rect.bottom-y-22;
 	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
 	htmp=GetDlgItem(hwnd,IDC_FILE_INFO);
@@ -123,6 +124,7 @@ int create_fileview(HWND hparent,HWND *hfview,int id)
 
 LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
+	static HWND hgrippy=0;
 	switch(msg){
 	case WM_INITDIALOG:
 		ghmainmenu=LoadMenu(ghinstance,MAKEINTRESOURCE(IDR_MAIN_MENU));
@@ -130,6 +132,12 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetMenu(hwnd,ghmainmenu);
 		create_fileview(hwnd,&ghfileview1,0);
 		create_fileview(hwnd,&ghfileview2,0);
+		create_grippy(hwnd,&hgrippy);
+		resize_main_dlg(hwnd,gstyle);
+		break;
+	case WM_SIZE:
+		resize_main_dlg(hwnd,gstyle);
+		move_grippy(hwnd,hgrippy);
 		break;
 	case WM_COMMAND:
 		switch(LOWORD(wparam)){
