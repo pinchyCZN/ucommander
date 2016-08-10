@@ -30,6 +30,20 @@ int create_listview(HWND hparent,HWND *hlview,int idc,int counter)
 	}
 	return result;
 }
+int init_grippy(HWND hwnd,int idc)
+{
+	int result=FALSE;
+	HWND hgrippy;
+	LONG style;
+	if(0==hwnd)
+		return result;
+	hgrippy=GetDlgItem(hwnd,idc);
+	if(0==hgrippy)
+		return result;
+	style=WS_CHILD|WS_VISIBLE|SBS_SIZEGRIP;
+	result=SetWindowLong(hgrippy,GWL_STYLE,style);
+	return result;
+}
 int resize_fileview(HWND hwnd)
 {
 	RECT rect={0},rtmp={0};
@@ -79,7 +93,7 @@ int resize_fileview(HWND hwnd)
 	htmp=GetDlgItem(hwnd,IDC_LVIEW);
 	x=0;
 	y+=h+2;
-	w=rect.right/2;
+	w=rect.right;
 	h=rect.bottom-y-22;
 	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
 	htmp=GetDlgItem(hwnd,IDC_FILE_INFO);
@@ -88,6 +102,11 @@ int resize_fileview(HWND hwnd)
 	w=rect.right;
 	h=22;
 	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
+	htmp=GetDlgItem(hwnd,IDC_GRIPPY);
+	x=rect.right-15;
+	y=rect.bottom-15;
+	w=h=15;
+	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER);
 	return 0;
 }
 LRESULT CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
@@ -101,6 +120,9 @@ LRESULT CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetDlgItemTextW(hwnd,IDC_HOTLIST,TEXT("\x3D\x27")); //0x273D asterisk
 			SetDlgItemTextW(hwnd,IDC_HISTORY,TEXT("\xBC\x25")); //0x25BC downarrow
 		}
+		break;
+	case WM_SIZE:
+		resize_fileview(hwnd);
 		break;
 	}
 	return 0;
@@ -124,7 +146,6 @@ int create_fileview(HWND hparent,HWND *hfview,int id)
 
 LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
-	static HWND hgrippy=0;
 	switch(msg){
 	case WM_INITDIALOG:
 		ghmainmenu=LoadMenu(ghinstance,MAKEINTRESOURCE(IDR_MAIN_MENU));
@@ -132,12 +153,11 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetMenu(hwnd,ghmainmenu);
 		create_fileview(hwnd,&ghfileview1,0);
 		create_fileview(hwnd,&ghfileview2,0);
-		create_grippy(hwnd,&hgrippy);
+		init_grippy(ghfileview2,IDC_GRIPPY);
 		resize_main_dlg(hwnd,gstyle);
 		break;
 	case WM_SIZE:
 		resize_main_dlg(hwnd,gstyle);
-		move_grippy(hwnd,hgrippy);
 		break;
 	case WM_COMMAND:
 		switch(LOWORD(wparam)){
