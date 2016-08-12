@@ -11,7 +11,24 @@ extern int worker_cmd;
 
 int init_fviews()
 {
-	printf("234\n");
+	extern HWND ghfileview1,ghfileview2;
+	HWND *hlist[]={&ghfileview1,&ghfileview2};
+	int i,drives;
+	drives=GetLogicalDrives();
+	for(i=0;i<sizeof(hlist)/sizeof(HWND *);i++){
+		int j;
+		HWND htmp,hdlg;
+		hdlg=*hlist[i];
+		htmp=GetDlgItem(hdlg,IDC_COMBO_DRIVE);
+		SendMessage(htmp,CB_RESETCONTENT,0,0);
+		for(j=0;j<26;j++){
+			char tmp[20]={0};
+			if(drives&(1<<j)){
+				_snprintf(tmp,sizeof(tmp),"%c:\\",'A'+j);
+				SendMessage(htmp,CB_ADDSTRING,0,tmp);
+			}
+		}
+	}
 }
 
 DWORD WINAPI worker_thread(VOID *arg)

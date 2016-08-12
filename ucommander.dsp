@@ -95,6 +95,10 @@ SOURCE=.\anchor_system.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\file_lview.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\fileview.c
 # End Source File
 # Begin Source File
@@ -116,6 +120,10 @@ SOURCE=.\worker_thread.c
 # Begin Source File
 
 SOURCE=.\cmd_list.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\file_list.h
 # End Source File
 # Begin Source File
 
