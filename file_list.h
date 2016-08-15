@@ -10,8 +10,13 @@ struct FILE_ENTRY{
 struct FILE_LIST{
 	std::vector<FILE_ENTRY> files;
 };
-class FILE_DLG{
-public:
-		std::vector<FILE_LIST> flist;
+struct FILE_DLG{
+	std::vector<FILE_LIST> fdlg;
 };
-
+struct FILE_TAB{
+	std::vector<FILE_DLG> ftabs;
+	int current_tab;
+	FILE_TAB():
+		current_tab(0)
+		{};
+};
