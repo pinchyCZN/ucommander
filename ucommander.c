@@ -27,6 +27,14 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetMenu(hwnd,ghmainmenu);
 		create_fileview(hwnd,&ghfileview1,0);
 		create_fileview(hwnd,&ghfileview2,0);
+		{
+			int i;
+			for(i=0;i<5;i++){
+				TCHAR tmp[40];
+				_snprintf(tmp,sizeof(tmp),"test%i",i);
+				add_tab(GetDlgItem(ghfileview1,IDC_TAB_VIEW),0,tmp);
+			}
+		}
 		init_grippy(ghfileview2,IDC_GRIPPY);
 		resize_main_dlg(hwnd,gstyle);
 		ghevent=CreateEvent(NULL,FALSE,FALSE,TEXT("WORKEREVENT"));

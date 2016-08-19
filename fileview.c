@@ -64,6 +64,9 @@ int resize_fileview(HWND hwnd)
 	SendMessage(htmp,TCM_GETITEMRECT,0,&rtmp);
 	if(0==rtmp.left && 0==rtmp.right){
 		w=h=0;
+	}else{
+		w=rect.right;
+		h=rtmp.bottom-rtmp.top;
 	}
 	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
 	htmp=GetDlgItem(hwnd,IDC_EDIT_PATH);

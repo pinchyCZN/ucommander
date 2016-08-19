@@ -8,7 +8,9 @@
 
 #include "file_list.h"
 
-struct FILE_TAB ftabs_left,ftabs_right;
+extern "C" HWND ghfileview1,ghfileview2;
+
+struct FILE_TABS ftabs_left(&ghfileview1),ftabs_right(&ghfileview1);
 int check_filter(TCHAR *in,TCHAR *filter)
 {
 	return TRUE;
@@ -30,4 +32,22 @@ int populate_flist(TCHAR *path,TCHAR *filter,FILE_LIST &flist)
 		}
 	}
 	return 0;
+}
+
+int populate_ftab(int side,int tab)
+{
+	int result=FALSE;
+	FILE_TABS *ftabs;
+	FILE_DLG fdlg;
+	if(0==side)
+		ftabs=&ftabs_left;
+	else
+		ftabs=&ftabs_right;
+
+	if(tab<0 || tab>ftabs->fdlgs.size() || 0==ftabs->fdlgs.size())
+		return result;
+
+	fdlg=ftabs->fdlgs[tab];
+
+	return result;
 }

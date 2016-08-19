@@ -12,11 +12,21 @@ struct FILE_LIST{
 };
 struct FILE_DLG{
 	std::vector<FILE_LIST> fdlg;
+	std::string filter;
+	int tab_index;
 };
-struct FILE_TAB{
-	std::vector<FILE_DLG> ftabs;
+struct FILE_TABS{
+	std::vector<FILE_DLG> fdlgs;
 	int current_tab;
-	FILE_TAB():
-		current_tab(0)
+	HWND *_hfview;
+	HWND hfview(){
+		if(_hfview!=0)
+			return *_hfview;
+		else
+			return NULL;
+	}
+	FILE_TABS(HWND *hwnd):
+		current_tab(0),
+		_hfview(hwnd)
 		{};
 };

@@ -30,6 +30,13 @@ int init_fviews()
 		}
 	}
 }
+int add_tab(HWND htab,int index,TCHAR *txt)
+{
+	TC_ITEM tci={0};
+	tci.mask=TCIF_TEXT;
+	tci.pszText=txt;
+	return TabCtrl_InsertItem(htab,index,&tci);
+}
 
 DWORD WINAPI worker_thread(VOID *arg)
 {
@@ -48,6 +55,9 @@ DWORD WINAPI worker_thread(VOID *arg)
 		switch(cmd){
 		case CMD_INIT:
 			init_fviews();
+			break;
+		case CMD_NEWTAB:
+
 			break;
 		}
 		
