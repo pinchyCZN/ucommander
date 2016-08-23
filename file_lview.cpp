@@ -43,6 +43,14 @@ int populate_flist(TCHAR *path,TCHAR *filter,FILE_TAB *ftab)
 	return 0;
 }
 
+int add_lview_item(HWND hlview,std::string str)
+{
+	LV_ITEM lvitem={0};
+	lvitem.mask=LVIF_TEXT;
+	lvitem.pszText=(TCHAR*)str.c_str();
+	ListView_SetItem(hlview,&lvitem);
+	return 0;
+}
 int populate_ftab(int side,int tab)
 {
 	int result=FALSE;
@@ -59,6 +67,11 @@ int populate_ftab(int side,int tab)
 	ftab=&fdlg->ftab[tab];
 	populate_flist("C:\\*.*","*",ftab);
 	printf("size=%i\n",ftab->flist.size());
+	int i;
+	HWND hlview=GetDlgItem(fdlg->hfview(),IDC_LVIEW);
+	for(i=0;i<ftab->flist.size();i++){
+		add_lview_item(hlview,ftab->flist[i].fname);
+	}
 	return result;
 }
 int add_ftab(int side)
