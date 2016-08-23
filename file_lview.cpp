@@ -8,14 +8,20 @@
 
 #include "file_list.h"
 
-extern "C" HWND ghfileview1,ghfileview2;
+extern "C" {
+	extern HWND ghfileview1,ghfileview2;
+	int populate_ftab(int side,int tab);
+	int add_ftab(int side);
+};
 
-struct FILE_TABS ftabs_left(&ghfileview1),ftabs_right(&ghfileview1);
+int stop_thread=0;
+
+struct FILE_DLG fdlg_left(&ghfileview1),fdlg_right(&ghfileview1);
 int check_filter(TCHAR *in,TCHAR *filter)
 {
 	return TRUE;
 }
-int populate_flist(TCHAR *path,TCHAR *filter,FILE_LIST &flist)
+int populate_flist(TCHAR *path,TCHAR *filter,FILE_TAB *ftab)
 {
 	WIN32_FIND_DATA wfd={0};
 	HANDLE hfd;
@@ -26,9 +32,12 @@ int populate_flist(TCHAR *path,TCHAR *filter,FILE_LIST &flist)
 				FILE_ENTRY fe;
 				fe.fname=wfd.cFileName;
 				GetFileAttributesEx(wfd.cFileName,GetFileExInfoStandard,&fe.attributes);
-				flist.files.push_back(fe);
+				ftab->flist.push_back(fe);
 			}
-			FindNextFile(hfd,&wfd);
+			if(0==FindNextFile(hfd,&wfd))
+				break;
+			if(stop_thread)
+				break;
 		}
 	}
 	return 0;
@@ -37,17 +46,29 @@ int populate_flist(TCHAR *path,TCHAR *filter,FILE_LIST &flist)
 int populate_ftab(int side,int tab)
 {
 	int result=FALSE;
-	FILE_TABS *ftabs;
-	FILE_DLG fdlg;
+	FILE_DLG *fdlg;
+	FILE_TAB *ftab;
 	if(0==side)
-		ftabs=&ftabs_left;
+		fdlg=&fdlg_left;
 	else
-		ftabs=&ftabs_right;
+		fdlg=&fdlg_right;
 
-	if(tab<0 || tab>ftabs->fdlgs.size() || 0==ftabs->fdlgs.size())
+	if(tab<0 || tab>fdlg->ftab.size() || 0==fdlg->ftab.size())
 		return result;
 
-	fdlg=ftabs->fdlgs[tab];
-
+	ftab=&fdlg->ftab[tab];
+	populate_flist("C:\\*.*","*",ftab);
+	printf("size=%i\n",ftab->flist.size());
 	return result;
+}
+int add_ftab(int side)
+{
+	FILE_DLG *fdlg;
+	FILE_TAB ftab;
+	if(0==side)
+		fdlg=&fdlg_left;
+	else
+		fdlg=&fdlg_right;
+	fdlg->ftab.push_back(ftab);
+	return fdlg->ftab.size()-1;
 }

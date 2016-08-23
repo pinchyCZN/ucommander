@@ -6,3 +6,7 @@ enum{
 	CMD_PREVTAB,
 
 }ENUM_CMD;
+enum{
+	TARGET_LEFT=0,
+	TARGET_RIGHT,
+}ENUM_TARGET;

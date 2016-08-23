@@ -7,16 +7,16 @@ struct FILE_ENTRY{
 	std::string fname;
 	WIN32_FILE_ATTRIBUTE_DATA attributes;
 };
-struct FILE_LIST{
-	std::vector<FILE_ENTRY> files;
-};
-struct FILE_DLG{
-	std::vector<FILE_LIST> fdlg;
+struct FILE_TAB{
+	std::vector<FILE_ENTRY> flist;
+	std::string path;
+	std::string tab_name;
 	std::string filter;
 	int tab_index;
+	int is_search_result;
 };
-struct FILE_TABS{
-	std::vector<FILE_DLG> fdlgs;
+struct FILE_DLG{
+	std::vector<FILE_TAB> ftab;
 	int current_tab;
 	HWND *_hfview;
 	HWND hfview(){
@@ -25,8 +25,13 @@ struct FILE_TABS{
 		else
 			return NULL;
 	}
-	FILE_TABS(HWND *hwnd):
+	FILE_DLG(HWND *hwnd):
 		current_tab(0),
 		_hfview(hwnd)
 		{};
+	FILE_DLG():
+		current_tab(0),
+		_hfview(0)
+		{};
+
 };

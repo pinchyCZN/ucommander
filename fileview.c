@@ -60,13 +60,17 @@ int resize_fileview(HWND hwnd)
 	x=0;y=rtmp.bottom+5;
 	w=rect.right;
 	h=rect.bottom-y-20;
-	memset(&rtmp,0,sizeof(rtmp));
-	SendMessage(htmp,TCM_GETITEMRECT,0,&rtmp);
-	if(0==rtmp.left && 0==rtmp.right){
-		w=h=0;
-	}else{
-		w=rect.right;
-		h=rtmp.bottom-rtmp.top;
+
+	w=h=0;
+	if(2<=SendMessage(htmp,TCM_GETITEMCOUNT,0,0)){
+		memset(&rtmp,0,sizeof(rtmp));
+		SendMessage(htmp,TCM_GETITEMRECT,0,&rtmp);
+		if(0==rtmp.left && 0==rtmp.right){
+			w=h=0;
+		}else{
+			w=rect.right;
+			h=rtmp.bottom-rtmp.top;
+		}
 	}
 	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
 	htmp=GetDlgItem(hwnd,IDC_EDIT_PATH);

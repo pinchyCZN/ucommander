@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <Commctrl.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include "resource.h"
 #include "cmd_list.h"
 
@@ -14,9 +15,46 @@ HWND ghfileview1=0,ghfileview2=0;
 HANDLE ghevent=0;
 DWORD gthreadid=0;
 int worker_cmd=0;
+int worker_target=0;
 int gstyle=0;
 
 DWORD WINAPI worker_thread(LPVOID);
+
+void open_console()
+{
+	char title[MAX_PATH]={0};
+	HWND hcon;
+	FILE *hf;
+	static BYTE consolecreated=FALSE;
+	static int hcrt=0;
+
+	if(consolecreated==TRUE)
+	{
+		GetConsoleTitle(title,sizeof(title));
+		if(title[0]!=0){
+			hcon=FindWindow(NULL,title);
+			ShowWindow(hcon,SW_SHOW);
+		}
+		hcon=(HWND)GetStdHandle(STD_INPUT_HANDLE);
+		FlushConsoleInputBuffer(hcon);
+		return;
+	}
+	AllocConsole();
+	hcrt=_open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE),_O_TEXT);
+
+	fflush(stdin);
+	hf=_fdopen(hcrt,"w");
+	*stdout=*hf;
+	setvbuf(stdout,NULL,_IONBF,0);
+	GetConsoleTitle(title,sizeof(title));
+	if(title[0]!=0){
+		hcon=FindWindow(NULL,title);
+		ShowWindow(hcon,SW_SHOW);
+		SetForegroundWindow(hcon);
+	}
+	consolecreated=TRUE;
+}
+
 
 LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
@@ -29,7 +67,7 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		create_fileview(hwnd,&ghfileview2,0);
 		{
 			int i;
-			for(i=0;i<5;i++){
+			for(i=0;i<1;i++){
 				TCHAR tmp[40];
 				_snprintf(tmp,sizeof(tmp),"test%i",i);
 				add_tab(GetDlgItem(ghfileview1,IDC_TAB_VIEW),0,tmp);
@@ -41,6 +79,10 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		if(ghevent!=0){
 			CreateThread(NULL,0,worker_thread,ghevent,0,&gthreadid);
 			InterlockedExchange(&worker_cmd,CMD_INIT);
+			SetEvent(ghevent);
+			Sleep(100);
+			InterlockedExchange(&worker_target,TARGET_LEFT);
+			InterlockedExchange(&worker_cmd,CMD_NEWTAB);
 			SetEvent(ghevent);
 		}
 		break;
@@ -69,6 +111,7 @@ int WINAPI WinMain(HINSTANCE hinstance,HINSTANCE hprevinstance,PSTR cmdline,int 
 
 	ghinstance=hinstance;
 
+	open_console();
 	OleInitialize(0);
 
 	ctrls.dwSize=sizeof(ctrls);

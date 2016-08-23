@@ -7,7 +7,16 @@
 #include "resource.h"
 #include "cmd_list.h"
 
-extern int worker_cmd;
+extern int worker_cmd,worker_target;
+extern HWND ghfileview1,ghfileview2;
+
+int add_tab(HWND htab,int index,TCHAR *txt)
+{
+	TC_ITEM tci={0};
+	tci.mask=TCIF_TEXT;
+	tci.pszText=txt;
+	return TabCtrl_InsertItem(htab,index,&tci);
+}
 
 int init_fviews()
 {
@@ -30,14 +39,22 @@ int init_fviews()
 		}
 	}
 }
-int add_tab(HWND htab,int index,TCHAR *txt)
+int get_fview(int target,HWND *hout)
 {
-	TC_ITEM tci={0};
-	tci.mask=TCIF_TEXT;
-	tci.pszText=txt;
-	return TabCtrl_InsertItem(htab,index,&tci);
+	if(target==TARGET_LEFT)
+		*hout=ghfileview1;
+	else
+		*hout=ghfileview2;
+	return *hout!=0;
 }
+int cmd_add_tab(int target)
+{
+	HWND hfview=0;
+	get_fview(target,&hfview);
+	add_ftab(target);
+	populate_ftab(target,0);
 
+}
 DWORD WINAPI worker_thread(VOID *arg)
 {
 	HANDLE hevent=arg;
@@ -45,19 +62,20 @@ DWORD WINAPI worker_thread(VOID *arg)
 		return -1;
 	while(TRUE){
 		DWORD event;
-		int cmd=0;
+		int cmd,target;
 		event=WaitForSingleObject(hevent,INFINITE);
 		if(event!=WAIT_OBJECT_0){
 			Sleep(1000);
 			continue;
 		}
 		cmd=InterlockedExchange(&worker_cmd,0);
+		target=InterlockedExchange(&worker_target,0);
 		switch(cmd){
 		case CMD_INIT:
 			init_fviews();
 			break;
 		case CMD_NEWTAB:
-
+			cmd_add_tab(target);
 			break;
 		}
 		
