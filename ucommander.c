@@ -12,6 +12,7 @@ HINSTANCE ghinstance=0;
 HWND ghmain=0;
 HMENU ghmainmenu=0;
 HWND ghfileview1=0,ghfileview2=0;
+HWND ghlview1=0,ghlview2=0;
 HANDLE ghevent=0;
 DWORD gthreadid=0;
 int worker_cmd=0;
@@ -65,6 +66,8 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetMenu(hwnd,ghmainmenu);
 		create_fileview(hwnd,&ghfileview1,0);
 		create_fileview(hwnd,&ghfileview2,0);
+		ghlview1=GetDlgItem(ghfileview1,IDC_LVIEW);
+		ghlview2=GetDlgItem(ghfileview2,IDC_LVIEW);
 		{
 			int i;
 			for(i=0;i<1;i++){

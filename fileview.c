@@ -111,6 +111,23 @@ int resize_fileview(HWND hwnd)
 	SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER);
 	return 0;
 }
+int draw_item(DRAWITEMSTRUCT *di,int mode)
+{
+	int result=FALSE;
+	TCHAR text[2048];
+	int textcolor,bgcolor;
+	if(0==di)
+		return result;
+	ListView_GetItemText(di->hwndItem,di->itemID,0,text,sizeof(text)/sizeof(TCHAR));
+	text[sizeof(text)/sizeof(TCHAR)-1]=0;
+	bgcolor=GetSysColor(di->itemState&ODS_SELECTED ? COLOR_HIGHLIGHT:COLOR_WINDOW);
+	textcolor=GetSysColor(di->itemState&ODS_SELECTED ? COLOR_HIGHLIGHTTEXT:COLOR_WINDOWTEXT);
+	SetTextColor(di->hDC,textcolor);
+	SetBkColor(di->hDC,bgcolor);
+	DrawText(di->hDC,text,-1,&di->rcItem,DT_LEFT|DT_NOPREFIX);
+	return result;
+}
+
 LRESULT CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
@@ -121,6 +138,15 @@ LRESULT CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			resize_fileview(hwnd);
 			SetDlgItemTextW(hwnd,IDC_HOTLIST,TEXT("\x3D\x27")); //0x273D asterisk
 			SetDlgItemTextW(hwnd,IDC_HISTORY,TEXT("\xBC\x25")); //0x25BC downarrow
+		}
+		break;
+	case WM_DRAWITEM:
+		{
+			DRAWITEMSTRUCT *di=lparam;
+			if(di!=0 && di->CtlType==ODT_LISTVIEW){
+				draw_item(di,0);
+				return TRUE;
+			}
 		}
 		break;
 	case WM_SIZE:

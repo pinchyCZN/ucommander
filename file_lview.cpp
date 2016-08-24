@@ -42,15 +42,96 @@ int populate_flist(TCHAR *path,TCHAR *filter,FILE_TAB *ftab)
 	}
 	return 0;
 }
-
-int add_lview_item(HWND hlview,std::string str)
+int get_first_line_len(const char *str)
 {
-	LV_ITEM lvitem={0};
-	lvitem.mask=LVIF_TEXT;
-	lvitem.pszText=(TCHAR*)str.c_str();
-	ListView_SetItem(hlview,&lvitem);
+	int i,len;
+	len=0x10000;
+	for(i=0;i<len;i++){
+		if(str[i]=='\n' || str[i]=='\r' || str[i]==0)
+			break;
+	}
+	return i;
+}
+int get_string_width_wc(HWND hwnd,const char *str,int wide_char)
+{
+	if(hwnd!=0 && str!=0){
+		SIZE size={0};
+		HDC hdc;
+		hdc=GetDC(hwnd);
+		if(hdc!=0){
+			HFONT hfont;
+			int len=get_first_line_len(str);
+			hfont=(HFONT)SendMessage(hwnd,WM_GETFONT,0,0);
+			if(hfont!=0){
+				HGDIOBJ hold=0;
+				hold=SelectObject(hdc,hfont);
+				if(wide_char)
+					GetTextExtentPoint32W(hdc,(WCHAR*)str,wcslen((WCHAR*)str),&size);
+				else
+					GetTextExtentPoint32(hdc,str,len,&size);
+				if(hold!=0)
+					SelectObject(hdc,hold);
+			}
+			else{
+				if(wide_char)
+					GetTextExtentPoint32W(hdc,(WCHAR*)str,wcslen((WCHAR*)str),&size);
+				else
+					GetTextExtentPoint32(hdc,str,len,&size);
+			}
+			ReleaseDC(hwnd,hdc);
+			return size.cx;
+		}
+	}
+	return 0;
+
+}
+int get_str_width(HWND hwnd,const char *str)
+{
+	return get_string_width_wc(hwnd,str,FALSE);
+}
+int lv_add_column(HWND hlistview,std::string &str,int index)
+{
+	LV_COLUMN col;
+	if(hlistview!=0){
+		HWND header;
+		int width=0;
+		header=(HWND)SendMessage(hlistview,LVM_GETHEADER,0,0);
+		width=get_str_width(header,str.c_str());
+		width+=14;
+		if(width<40)
+			width=40;
+		col.mask = LVCF_WIDTH|LVCF_TEXT;
+		col.cx = width;
+		col.pszText = (TCHAR*)str.c_str();
+		if(ListView_InsertColumn(hlistview,index,&col)>=0)
+			return width;
+	}
 	return 0;
 }
+int lv_insert_data(HWND hlistview,int row,int col,std::string &str)
+{
+	if(hlistview!=0){
+		LV_ITEM item;
+		memset(&item,0,sizeof(item));
+		if(col==0){
+			item.mask=LVIF_TEXT|LVIF_PARAM;
+			item.iItem=row;
+			item.pszText=(TCHAR*)str.c_str();
+			item.lParam=row;
+			ListView_InsertItem(hlistview,&item);
+		}
+		else{
+			item.mask=LVIF_TEXT;
+			item.iItem=row;
+			item.pszText=(TCHAR*)str.c_str();
+			item.iSubItem=col;
+			ListView_SetItem(hlistview,&item);
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
 int populate_ftab(int side,int tab)
 {
 	int result=FALSE;
@@ -69,8 +150,9 @@ int populate_ftab(int side,int tab)
 	printf("size=%i\n",ftab->flist.size());
 	int i;
 	HWND hlview=GetDlgItem(fdlg->hfview(),IDC_LVIEW);
+	lv_add_column(hlview,std::string("123"),0);
 	for(i=0;i<ftab->flist.size();i++){
-		add_lview_item(hlview,ftab->flist[i].fname);
+		lv_insert_data(hlview,i,0,ftab->flist[i].fname);
 	}
 	return result;
 }
