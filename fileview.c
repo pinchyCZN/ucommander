@@ -133,8 +133,6 @@ LRESULT CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	switch(msg){
 	case WM_INITDIALOG:
 		{
-			HWND hlview=0;
-			create_listview(hwnd,&hlview,IDC_LVIEW,lparam);
 			resize_fileview(hwnd);
 			SetDlgItemTextW(hwnd,IDC_HOTLIST,TEXT("\x3D\x27")); //0x273D asterisk
 			SetDlgItemTextW(hwnd,IDC_HISTORY,TEXT("\xBC\x25")); //0x25BC downarrow

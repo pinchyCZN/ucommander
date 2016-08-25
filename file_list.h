@@ -12,8 +12,10 @@ struct FILE_TAB{
 	std::string path;
 	std::string tab_name;
 	std::string filter;
+	HWND hlview;
 	int tab_index;
 	int is_search_result;
+	int col_style;
 };
 struct FILE_DLG{
 	std::vector<FILE_TAB> ftab;

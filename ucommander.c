@@ -12,7 +12,6 @@ HINSTANCE ghinstance=0;
 HWND ghmain=0;
 HMENU ghmainmenu=0;
 HWND ghfileview1=0,ghfileview2=0;
-HWND ghlview1=0,ghlview2=0;
 HANDLE ghevent=0;
 DWORD gthreadid=0;
 int worker_cmd=0;
@@ -20,6 +19,8 @@ int worker_target=0;
 int gstyle=0;
 
 DWORD WINAPI worker_thread(LPVOID);
+struct WORKER_PARAMS worker_params={0};
+CRITICAL_SECTION mutex={0};
 
 void open_console()
 {
@@ -56,7 +57,22 @@ void open_console()
 	consolecreated=TRUE;
 }
 
-
+int add_command(int command,int sub_command)
+{
+	int max_index;
+	EnterCriticalSection(&mutex);
+	if(worker_params.index<0)
+		worker_params.index=0;
+	max_index=sizeof(worker_params.cmd_list)/sizeof(struct CMD_LIST);
+	max_index-=1;
+	if(worker_params.index < max_index){
+		int index=worker_params.index;
+		worker_params.cmd_list[index].cmd=command;
+		worker_params.cmd_list[index].sub_cmd=sub_command;
+		worker_params.index++;
+	}
+	LeaveCriticalSection(&mutex);
+}
 LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
@@ -66,8 +82,6 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetMenu(hwnd,ghmainmenu);
 		create_fileview(hwnd,&ghfileview1,0);
 		create_fileview(hwnd,&ghfileview2,0);
-		ghlview1=GetDlgItem(ghfileview1,IDC_LVIEW);
-		ghlview2=GetDlgItem(ghfileview2,IDC_LVIEW);
 		{
 			int i;
 			for(i=0;i<1;i++){
@@ -80,7 +94,7 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		resize_main_dlg(hwnd,gstyle);
 		ghevent=CreateEvent(NULL,FALSE,FALSE,TEXT("WORKEREVENT"));
 		if(ghevent!=0){
-			CreateThread(NULL,0,worker_thread,ghevent,0,&gthreadid);
+			CreateThread(NULL,0,worker_thread,&worker_params,0,&gthreadid);
 			InterlockedExchange(&worker_cmd,CMD_INIT);
 			SetEvent(ghevent);
 			Sleep(100);
@@ -116,6 +130,7 @@ int WINAPI WinMain(HINSTANCE hinstance,HINSTANCE hprevinstance,PSTR cmdline,int 
 
 	open_console();
 	OleInitialize(0);
+	InitializeCriticalSection(&mutex);
 
 	ctrls.dwSize=sizeof(ctrls);
     ctrls.dwICC = ICC_LISTVIEW_CLASSES|ICC_TREEVIEW_CLASSES|ICC_BAR_CLASSES;

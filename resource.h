@@ -6,6 +6,7 @@
 #define IDD_FILE_VIEW                   102
 #define IDR_MAIN_MENU                   103
 #define IDD_INSTALL_DIALOG              104
+#define IDD_LVIEW                       105
 #define IDC_TAB_VIEW                    1000
 #define IDC_COMBO_DRIVE                 1001
 #define IDC_EDIT_PATH                   1002
@@ -18,6 +19,7 @@
 #define IDC_GRIPPY                      1008
 #define IDC_USE_LOCAL                   1009
 #define IDC_USE_APPDATA                 1010
+#define IDC_FILE_PATH                   1010
 #define IDC_NO_INI                      1011
 #define IDC_TXT_LOCAL                   1012
 #define IDC_TXT_APPDATA                 1013
@@ -28,9 +30,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        104
+#define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40003
-#define _APS_NEXT_CONTROL_VALUE         1009
+#define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

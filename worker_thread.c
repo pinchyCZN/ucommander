@@ -55,27 +55,52 @@ int cmd_add_tab(int target)
 	populate_ftab(target,0);
 
 }
+int get_next_command(struct WORKER_PARAMS *wparams,int *cmd,int *sub_cmd)
+{
+	extern CRITICAL_SECTION mutex;
+	int i,count;
+	*cmd=0;
+	*sub_cmd=0;
+	EnterCriticalSection(&mutex);
+	*cmd=wparams->cmd_list[0].cmd;
+	*sub_cmd=wparams->cmd_list[0].sub_cmd;
+	count=sizeof(wparams->cmd_list)/sizeof(struct CMD_LIST);
+	count-=1;
+	for(i=0;i<count;i++){
+		wparams->cmd_list[i].cmd=wparams->cmd_list[i+1].cmd;
+		wparams->cmd_list[i].sub_cmd=wparams->cmd_list[i+1].sub_cmd;
+	}
+	wparams->cmd_list[count].cmd=0;
+	wparams->cmd_list[count].sub_cmd=0;
+	wparams->index--;
+	if(wparams->index<0)
+		wparams->index=0;
+	LeaveCriticalSection(&mutex);
+	return TRUE;
+}
 DWORD WINAPI worker_thread(VOID *arg)
 {
-	HANDLE hevent=arg;
-	if(hevent==0)
+	struct WORKER_PARAMS *wparams=arg;
+	HANDLE hevent;
+	if(arg==0)
 		return -1;
+	hevent=wparams->hevent;
 	while(TRUE){
 		DWORD event;
-		int cmd,target;
+		int cmd,sub_cmd;
 		event=WaitForSingleObject(hevent,INFINITE);
 		if(event!=WAIT_OBJECT_0){
 			Sleep(1000);
 			continue;
 		}
+		get_next_command(wparams,&cmd,&sub_cmd);
 		cmd=InterlockedExchange(&worker_cmd,0);
-		target=InterlockedExchange(&worker_target,0);
 		switch(cmd){
 		case CMD_INIT:
 			init_fviews();
 			break;
 		case CMD_NEWTAB:
-			cmd_add_tab(target);
+			cmd_add_tab(sub_cmd);
 			break;
 		}
 		
