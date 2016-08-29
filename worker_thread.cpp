@@ -34,10 +34,11 @@ int init_fviews()
 			char tmp[20]={0};
 			if(drives&(1<<j)){
 				_snprintf(tmp,sizeof(tmp),"%c:\\",'A'+j);
-				SendMessage(htmp,CB_ADDSTRING,0,tmp);
+				SendMessage(htmp,CB_ADDSTRING,0,(LPARAM)tmp);
 			}
 		}
 	}
+	return TRUE;
 }
 int get_fview(int target,HWND *hout)
 {
@@ -50,10 +51,9 @@ int get_fview(int target,HWND *hout)
 int cmd_add_tab(int target)
 {
 	HWND hfview=0;
+	void *fdlg=0;
 	get_fview(target,&hfview);
-	add_ftab(target);
-	populate_ftab(target,0);
-
+	return FALSE;
 }
 int get_next_command(struct WORKER_PARAMS *wparams,int *cmd,int *sub_cmd)
 {
@@ -80,11 +80,13 @@ int get_next_command(struct WORKER_PARAMS *wparams,int *cmd,int *sub_cmd)
 }
 DWORD WINAPI worker_thread(VOID *arg)
 {
-	struct WORKER_PARAMS *wparams=arg;
+	struct WORKER_PARAMS *wparams=(WORKER_PARAMS*)arg;
 	HANDLE hevent;
 	if(arg==0)
 		return -1;
 	hevent=wparams->hevent;
+	if(hevent==0)
+		return -1;
 	while(TRUE){
 		DWORD event;
 		int cmd,sub_cmd;
@@ -93,16 +95,17 @@ DWORD WINAPI worker_thread(VOID *arg)
 			Sleep(1000);
 			continue;
 		}
-		get_next_command(wparams,&cmd,&sub_cmd);
-		cmd=InterlockedExchange(&worker_cmd,0);
-		switch(cmd){
-		case CMD_INIT:
-			init_fviews();
-			break;
-		case CMD_NEWTAB:
-			cmd_add_tab(sub_cmd);
-			break;
-		}
+		do{
+			get_next_command(wparams,&cmd,&sub_cmd);
+			switch(cmd){
+			case CMD_INIT:
+				init_fviews();
+				break;
+			case CMD_NEWTAB:
+				cmd_add_tab(sub_cmd);
+				break;
+			}
+		}while(cmd!=0);
 		
 
 	}

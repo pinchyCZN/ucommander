@@ -9,6 +9,9 @@
 #define ANCHOR_BOTTOM 8
 #define ANCHOR_HCENTER 16
 
+int write_ini_value(char *section,char *key,int val);
+int get_ini_value(char *section,char *key,int *val);
+
 struct CONTROL_ANCHOR{
 	int ctrl_id;
 	int anchor_mask;

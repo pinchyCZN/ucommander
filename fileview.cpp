@@ -19,7 +19,7 @@ int create_listview(HWND hparent,HWND *hlview,int idc,int counter)
 	_snprintf(tmp,sizeof(tmp)/sizeof(TCHAR),TEXT("FILE LISTVIEW %i"),counter);
 	htmp=CreateWindowEx(exstyle,WC_LISTVIEW,tmp,
 		WS_TABSTOP|WS_CHILD|WS_CLIPSIBLINGS|WS_VISIBLE|LVS_REPORT|LVS_SHOWSELALWAYS|LVS_OWNERDRAWFIXED,
-		0,0,0,0,hparent,idc,ghinstance,counter);
+		0,0,0,0,hparent,(HMENU)idc,ghinstance,(LPVOID)counter);
 	if(htmp!=0){
 		result=TRUE;
 	}
@@ -64,7 +64,7 @@ int resize_fileview(HWND hwnd)
 	w=h=0;
 	if(2<=SendMessage(htmp,TCM_GETITEMCOUNT,0,0)){
 		memset(&rtmp,0,sizeof(rtmp));
-		SendMessage(htmp,TCM_GETITEMRECT,0,&rtmp);
+		SendMessage(htmp,TCM_GETITEMRECT,0,(LPARAM)&rtmp);
 		if(0==rtmp.left && 0==rtmp.right){
 			w=h=0;
 		}else{
@@ -128,19 +128,19 @@ int draw_item(DRAWITEMSTRUCT *di,int mode)
 	return result;
 }
 
-LRESULT CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+BOOL CALLBACK file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
 	case WM_INITDIALOG:
 		{
 			resize_fileview(hwnd);
-			SetDlgItemTextW(hwnd,IDC_HOTLIST,TEXT("\x3D\x27")); //0x273D asterisk
-			SetDlgItemTextW(hwnd,IDC_HISTORY,TEXT("\xBC\x25")); //0x25BC downarrow
+			SetDlgItemTextW(hwnd,IDC_HOTLIST,(WCHAR*)"\x3D\x27"); //0x273D asterisk
+			SetDlgItemTextW(hwnd,IDC_HISTORY,(WCHAR*)"\xBC\x25"); //0x25BC downarrow
 		}
 		break;
 	case WM_DRAWITEM:
 		{
-			DRAWITEMSTRUCT *di=lparam;
+			DRAWITEMSTRUCT *di=(DRAWITEMSTRUCT*)lparam;
 			if(di!=0 && di->CtlType==ODT_LISTVIEW){
 				draw_item(di,0);
 				return TRUE;

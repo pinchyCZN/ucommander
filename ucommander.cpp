@@ -22,6 +22,11 @@ DWORD WINAPI worker_thread(LPVOID);
 struct WORKER_PARAMS worker_params={0};
 CRITICAL_SECTION mutex={0};
 
+extern "C" int _open_osfhandle(long,int);
+int create_fileview(HWND hparent,HWND *hfview,int id);
+int init_grippy(HWND hwnd,int idc);
+int resize_main_dlg(HWND hwnd,int style);
+
 void open_console()
 {
 	char title[MAX_PATH]={0};
@@ -72,8 +77,9 @@ int add_command(int command,int sub_command)
 		worker_params.index++;
 	}
 	LeaveCriticalSection(&mutex);
+	return TRUE;
 }
-LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+BOOL CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
 	case WM_INITDIALOG:
@@ -82,24 +88,14 @@ LRESULT CALLBACK MainDlg(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 			SetMenu(hwnd,ghmainmenu);
 		create_fileview(hwnd,&ghfileview1,0);
 		create_fileview(hwnd,&ghfileview2,0);
-		{
-			int i;
-			for(i=0;i<1;i++){
-				TCHAR tmp[40];
-				_snprintf(tmp,sizeof(tmp),"test%i",i);
-				add_tab(GetDlgItem(ghfileview1,IDC_TAB_VIEW),0,tmp);
-			}
-		}
 		init_grippy(ghfileview2,IDC_GRIPPY);
 		resize_main_dlg(hwnd,gstyle);
 		ghevent=CreateEvent(NULL,FALSE,FALSE,TEXT("WORKEREVENT"));
 		if(ghevent!=0){
+			worker_params.hevent=ghevent;
 			CreateThread(NULL,0,worker_thread,&worker_params,0,&gthreadid);
-			InterlockedExchange(&worker_cmd,CMD_INIT);
-			SetEvent(ghevent);
-			Sleep(100);
-			InterlockedExchange(&worker_target,TARGET_LEFT);
-			InterlockedExchange(&worker_cmd,CMD_NEWTAB);
+			add_command(CMD_INIT,0);
+			add_command(CMD_NEWTAB,0);
 			SetEvent(ghevent);
 		}
 		break;

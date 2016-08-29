@@ -8,6 +8,13 @@
 #define APP_NAME TEXT("ucommander")
 #include "ram_ini_file.h"
 char ini_file[MAX_PATH]={0};
+
+int create_grippy(HWND hwnd,HWND *hgrippy);
+int init_ini_win_anchor(HWND hwnd);
+int move_grippy(HWND hwnd,HWND grippy);
+int resize_ini_win(HWND hwnd);
+
+
 int is_path_directory_wc(WCHAR *path)
 {
 	int attrib;
@@ -135,8 +142,8 @@ int get_appdata_folder(char *path,int size)
 			found=TRUE;
 		}
 		if(SHGetMalloc(&palloc)==NOERROR){
-			palloc->lpVtbl->Free(palloc,pidl);
-			palloc->lpVtbl->Release(palloc);
+			palloc->Free(pidl);
+			palloc->Release();
 		}
 	}
 	return found;
@@ -173,7 +180,7 @@ int set_module_dir()
 	return FALSE;
 
 }
-LRESULT CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+BOOL CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	static char *path_param=0;
 	static char local_path[MAX_PATH]={0};
@@ -183,7 +190,7 @@ LRESULT CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_INITDIALOG:
 		{
 			RECT rect={0};
-			path_param=lparam;
+			path_param=(char*)lparam;
 			local_path[0]=0;
 			GetCurrentDirectory(sizeof(local_path),local_path);
 			SetWindowText(GetDlgItem(hwnd,IDC_TXT_LOCAL),local_path);
@@ -237,7 +244,7 @@ LRESULT CALLBACK install_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 int do_install_dialog(char *path_param)
 {
 	extern HINSTANCE ghinstance;
-	return DialogBoxParam(ghinstance,IDD_INSTALL_DIALOG,NULL,install_proc,path_param);
+	return DialogBoxParam(ghinstance,MAKEINTRESOURCE(IDD_INSTALL_DIALOG),NULL,install_proc,(LPARAM)path_param);
 }
 int init_ini_file()
 {
@@ -298,7 +305,7 @@ int open_ini(HWND hwnd,int explore)
 	WIN32_FIND_DATA fd;
 	HANDLE h;
 	char str[MAX_PATH+80];
-	if(h=FindFirstFile(ini_file,&fd)!=INVALID_HANDLE_VALUE){
+	if((h=FindFirstFile(ini_file,&fd))!=INVALID_HANDLE_VALUE){
 		FindClose(h);
 		if(explore){
 			if(get_ini_path(str,sizeof(str)))
@@ -306,7 +313,7 @@ int open_ini(HWND hwnd,int explore)
 		}
 		else{
 			if(ini_file[0]!=0)
-				if(ShellExecute(hwnd,"open","notepad.exe",ini_file,NULL,SW_SHOWNORMAL)<=32)
+				if(ShellExecute(hwnd,"open","notepad.exe",ini_file,NULL,SW_SHOWNORMAL)<=(HINSTANCE)32)
 					ShellExecute(hwnd,"open",ini_file,NULL,NULL,SW_SHOWNORMAL);
 
 		}

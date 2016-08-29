@@ -22,12 +22,12 @@ static int add_section(RAM_INI *ini,char *section,INI_SECTION **s_new)
 	int result=FALSE;
 	if(ini!=0 && section!=0 && section[0]!=0){
 		INI_SECTION *s=0;
-		s=malloc(sizeof(INI_SECTION));
+		s=(INI_SECTION*)malloc(sizeof(INI_SECTION));
 		if(s){
 			int len;
 			memset(s,0,sizeof(INI_SECTION));
 			len=strlen(section)+1;
-			s->section=malloc(len);
+			s->section=(char*)malloc(len);
 			if(s->section){
 				strncpy(s->section,section,len);
 				result=TRUE;
@@ -44,7 +44,7 @@ static int add_section(RAM_INI *ini,char *section,INI_SECTION **s_new)
 						s->prev=n;
 						break;
 					}else{
-						n=n->next;
+						n=(INI_SECTION*)n->next;
 					}
 				};
 			}
@@ -62,16 +62,16 @@ static int add_key(INI_SECTION *section,char *key,char *val,INI_KEY **k_new)
 	int result=FALSE;
 	if(section!=0 && section->section!=0 && key!=0 && key[0]!=0 && val!=0){
 		INI_KEY *k=0;
-		k=malloc(sizeof(INI_KEY));
+		k=(INI_KEY*)malloc(sizeof(INI_KEY));
 		if(k){
 			int len;
 			memset(k,0,sizeof(INI_KEY));
 			len=strlen(key)+1;
-			k->key=malloc(len);
+			k->key=(char*)malloc(len);
 			if(k->key){
 				strncpy(k->key,key,len);
 				len=strlen(val)+1;
-				k->str=malloc(len);
+				k->str=(char*)malloc(len);
 				if(k->str){
 					strncpy(k->str,val,len);
 					result=TRUE;
@@ -97,7 +97,7 @@ static int add_key(INI_SECTION *section,char *key,char *val,INI_KEY **k_new)
 						k->prev=keys;
 						break;
 					}else{
-						keys=keys->next;
+						keys=(INI_KEY*)keys->next;
 					}
 				};
 			}
@@ -114,8 +114,8 @@ static int delete_key(INI_SECTION *section,INI_KEY *key)
 		return result;
 	if(section->keys){
 		INI_KEY *p,*n;
-		p=key->prev;
-		n=key->next;
+		p=(INI_KEY*)key->prev;
+		n=(INI_KEY*)key->next;
 		if(p)
 			p->next=n;
 		if(n)
@@ -146,8 +146,8 @@ static int delete_section(RAM_INI *ini,INI_SECTION *section)
 						if(!delete_key(s,s->keys))
 							break;
 					};
-					p=s->prev;
-					n=s->next;
+					p=(INI_SECTION*)s->prev;
+					n=(INI_SECTION*)s->next;
 					if(p)
 						p->next=n;
 					if(n)
@@ -160,7 +160,7 @@ static int delete_section(RAM_INI *ini,INI_SECTION *section)
 					break;
 				}
 			}
-			s=s->next;
+			s=(INI_SECTION*)s->next;
 		};
 	}
 	return result;
@@ -183,7 +183,7 @@ int find_section(RAM_INI *ini,char *section,INI_SECTION **sfound)
 					break;
 				}
 			}
-			s=s->next;
+			s=(INI_SECTION*)s->next;
 		};
 	}
 	return result;
@@ -205,7 +205,7 @@ int find_key(INI_SECTION *section,char *key,INI_KEY **kfound)
 					break;
 				}
 			}
-			k=k->next;
+			k=(INI_KEY*)k->next;
 		};
 	}
 	return result;
@@ -243,7 +243,7 @@ int write_private_profile_string(char *section,char *key,char *str,RAM_INI *ini)
 						if(k->str)
 							free(k->str);
 						len=strlen(str)+1;
-						k->str=malloc(len);
+						k->str=(char*)malloc(len);
 						if(k->str){
 							strncpy(k->str,str,len);
 							result=TRUE;

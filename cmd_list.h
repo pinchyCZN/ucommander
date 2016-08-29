@@ -8,15 +8,15 @@ struct WORKER_PARAMS{
 	int index;
 	struct CMD_LIST cmd_list[MAX_CMDS];
 };
-enum{
+enum ENUM_CMD{
 	CMD_INIT=1,
 	CMD_NEWTAB,
 	CMD_CLOSETAB,
 	CMD_NEXTTAB,
 	CMD_PREVTAB,
 
-}ENUM_CMD;
-enum{
+};
+enum ENUM_TARGET{
 	TARGET_LEFT=0,
 	TARGET_RIGHT,
-}ENUM_TARGET;
+};

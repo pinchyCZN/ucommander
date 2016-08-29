@@ -91,7 +91,7 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\anchor_system.c
+SOURCE=.\anchor_system.cpp
 # End Source File
 # Begin Source File
 
@@ -99,19 +99,19 @@ SOURCE=.\file_lview.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\fileview.c
+SOURCE=.\fileview.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ini_file.c
+SOURCE=.\ini_file.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ucommander.c
+SOURCE=.\ucommander.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\worker_thread.c
+SOURCE=.\worker_thread.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -124,6 +124,10 @@ SOURCE=.\cmd_list.h
 # Begin Source File
 
 SOURCE=.\file_list.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ram_ini_file.h
 # End Source File
 # Begin Source File
 
