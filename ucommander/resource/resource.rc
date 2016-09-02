@@ -1,0 +1,148 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN_DLG DIALOG DISCARDABLE  0, 0, 377, 238
+STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "ucommander"
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_FILE_VIEW DIALOG DISCARDABLE  0, 0, 369, 144
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_COMBO_DRIVE,4,5,48,30,CBS_DROPDOWNLIST | WS_VSCROLL
+    LTEXT           "IDC_DRIVE_INFO",IDC_DRIVE_INFO,63,6,137,11,
+                    SS_CENTERIMAGE | NOT WS_GROUP
+    CONTROL         "Tab1",IDC_TAB_VIEW,"SysTabControl32",0x0,4,22,176,20
+    PUSHBUTTON      "IDC_HOTLIST",IDC_HOTLIST,184,44,50,14,NOT WS_TABSTOP
+    PUSHBUTTON      "IDC_HISTORY",IDC_HISTORY,237,44,50,14,NOT WS_TABSTOP
+    LTEXT           "IDC_FILE_INFO",IDC_FILE_INFO,3,102,101,8,NOT WS_GROUP
+    SCROLLBAR       IDC_GRIPPY,287,81,10,40,SBS_VERT | NOT WS_VISIBLE
+END
+
+IDD_INSTALL_DIALOG DIALOG DISCARDABLE  0, 0, 358, 92
+STYLE WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_CAPTION | WS_SYSMENU | 
+    WS_THICKFRAME
+CAPTION "Set INI location"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "Where do you want to install the INI file?",
+                    IDC_INSTALL_INFO,0,6,357,14,SS_CENTERIMAGE
+    PUSHBUTTON      "Local Folder",IDC_USE_LOCAL,0,31,56,14
+    PUSHBUTTON      "App data folder",IDC_USE_APPDATA,0,53,56,14
+    PUSHBUTTON      "Dont use INI",IDC_NO_INI,0,74,56,14
+    EDITTEXT        IDC_TXT_LOCAL,61,30,296,14,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_TXT_APPDATA,61,52,296,14,ES_AUTOHSCROLL | 
+                    ES_READONLY
+    LTEXT           "Settings will not be saved",IDC_STATIC,61,78,81,8
+END
+
+IDD_LVIEW DIALOG DISCARDABLE  0, 0, 186, 94
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "IDC_LVIEW",IDC_LVIEW,59,32,50,14
+    EDITTEXT        IDC_FILE_PATH,9,6,157,16,ES_AUTOHSCROLL
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAIN_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&Files"
+    BEGIN
+        MENUITEM "change atributes",            ID_FILE_CHANGEATRIBUTES
+        MENUITEM "properties",                  ID_FILE_PROPERTIES
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_FILE_VIEW, DIALOG
+    BEGIN
+        RIGHTMARGIN, 297
+        BOTTOMMARGIN, 121
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

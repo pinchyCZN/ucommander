@@ -409,6 +409,11 @@
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
  <Folder name="ucommander">
+  <Folder name="resource">
+   <File path="resource\resource.h" />
+   <File path="resource\resource.rc" />
+  </Folder>
+  <File path="test.d" />
   <File path="winmain.d" />
  </Folder>
 </DProject>
