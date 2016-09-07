@@ -409,11 +409,17 @@
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
  <Folder name="ucommander">
-  <Folder name="resource">
-   <File path="resource\resource.h" />
-   <File path="resource\resource.rc" />
+  <Folder name="src">
+   <Folder name="resource">
+    <File path="src\resource\resource.d" />
+    <File tool="Custom" path="src\resource\resource.h" dependencies="src\resource\resource.rc" customcmd="echo htod &quot;$(InputPath)&quot;
+htod &quot;$(InputPath)&quot;
+echo move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;
+move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;" uptodateWithSameTime="true" outfile="src\resource\resource.d" />
+   </Folder>
+   <File path="src\test.d" />
+   <File path="src\windows_etc.d" />
+   <File path="src\winmain.d" />
   </Folder>
-  <File path="test.d" />
-  <File path="winmain.d" />
  </Folder>
 </DProject>
