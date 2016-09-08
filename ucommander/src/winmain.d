@@ -11,28 +11,29 @@ import std.utf;
 import std.stdio;
 //import windows_etc;
 //import test;
-//import resource;
+import resource;
 
 
+extern (Windows)
+//nothrow
+BOOL dlg_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+{
+	return 0;
+}
 
 extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Runtime.initialize();
-	//    int result=0;
-	string s="1123";
-
-//	CreateDialogParamW(hInstance,MAKEINTRESOURCEA(IDD_MAIN_DLG),0,dlg_proc,0);
-    MessageBoxA(null, s.toStringz(), "Error", MB_OK | MB_ICONEXCLAMATION);
-	//MessageBoxA(null,cast(char *)s.toStringz(),"qwe",MB_OK|MB_SYSTEMMODAL);
-	//	MessageBoxA(cast(void*)0,"123".toStringz,"qwe".toStringz,MB_OK|MB_SYSTEMMODAL);
+	myWinMain(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
     return 0;
 }
-
-
-/*
-BOOL dlg_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
 {
+	WNDCLASS wnd;
+	wnd.lpfnWndProc=&dlg_proc;
+//	CreateDialogParam(hInstance,MAKEINTRESOURCE(IDD_MAIN_DLG),0,wnd.lpfnWndProc,0);
 	return 0;
 }
-*/
+
+
