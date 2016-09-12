@@ -13,9 +13,10 @@ import std.stdio;
 //import test;
 import resource;
 
+HWND ghmain=NULL;
 
 extern (Windows)
-//nothrow
+nothrow
 BOOL dlg_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	return 0;
@@ -24,16 +25,21 @@ BOOL dlg_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 extern (Windows)
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	MSG msg;
 	Runtime.initialize();
-	myWinMain(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
+	ghmain=CreateDialogParam(hInstance,MAKEINTRESOURCE(IDD_MAIN_DLG),NULL,&dlg_proc,0);
+	if(ghmain==NULL){
+		MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
+		return -1;
+	}
+	ShowWindow(ghmain,SW_SHOW);
+	while(GetMessage(&msg,NULL,0,0))
+	{
+		if(!IsDialogMessage(ghmain,&msg)){
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
     return 0;
 }
-int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int iCmdShow)
-{
-	WNDCLASS wnd;
-	wnd.lpfnWndProc=&dlg_proc;
-//	CreateDialogParam(hInstance,MAKEINTRESOURCE(IDD_MAIN_DLG),0,wnd.lpfnWndProc,0);
-	return 0;
-}
-
 
