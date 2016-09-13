@@ -9,17 +9,30 @@ import core.sys.windows.commctrl;
 import std.string;
 import std.utf;
 import std.stdio;
+import fileview;
 //import windows_etc;
 //import test;
 import resource;
 
-HWND ghmain=NULL;
+__gshared{
+	HWND ghinstance=NULL;
+	HWND ghmain=NULL;
+	HWND ghmainmenu=NULL;
+	HWND ghfileview1=NULL,ghfileview2=NULL; 
+}
 
 extern (Windows)
 nothrow
 BOOL dlg_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
+	case WM_INITDIALOG:
+		ghmainmenu=LoadMenu(ghinstance,MAKEINTRESOURCE(IDR_MAIN_MENU));
+		if(ghmainmenu!=NULL)
+			SetMenu(hwnd,ghmainmenu);
+		create_fileview(hwnd,&ghfileview1,0);
+		create_fileview(hwnd,&ghfileview2,0);
+		break;
 	case WM_COMMAND:
 		switch(LOWORD(wparam)){
 		case IDCANCEL:
@@ -41,6 +54,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	MSG msg;
     INITCOMMONCONTROLSEX ctrls;
 
+	ghinstance=hInstance;
 	Runtime.initialize();
 
 	ctrls.dwSize=ctrls.sizeof;

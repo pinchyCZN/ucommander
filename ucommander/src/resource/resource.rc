@@ -62,6 +62,27 @@ BEGIN
     CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,47,39,243,76
 END
 
+IDD_FILE_VIEW DIALOGEX 0, 0, 440, 249
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TAB_VIEW,"SysTabControl32",0x0,24,34,208,32
+    PUSHBUTTON      "IDC_HOTLIST",IDC_HOTLIST,255,49,50,14
+    PUSHBUTTON      "IDC_HISTORY",IDC_HISTORY,328,50,50,14
+    COMBOBOX        IDC_COMBO_DRIVE,25,15,48,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "IDC_DRIVE_INFO",IDC_DRIVE_INFO,89,15,58,8
+    LTEXT           "IDC_FILE_INFO",IDC_FILE_INFO,30,226,52,8
+    SCROLLBAR       IDC_GRIPPY,393,169,10,40,SBS_VERT
+END
+
+IDD_LVIEW DIALOGEX 0, 0, 186, 94
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,63,30,60,50
+    EDITTEXT        IDC_FILE_PATH,52,8,86,14,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -80,6 +101,21 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAIN_MENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "change attributes",           ID_FILE_CHANGEATTRIBUTES
+        MENUITEM "properties",                  ID_FILE_PROPERTIES
+    END
+END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
