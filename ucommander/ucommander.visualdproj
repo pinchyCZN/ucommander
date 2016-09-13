@@ -92,7 +92,7 @@
   <libfiles>ole32.lib kernel32.lib user32.lib comctl32.lib comdlg32.lib</libfiles>
   <libpaths />
   <deffile />
-  <resfile>Win32\Debug\resource_resource.res</resfile>
+  <resfile>$(SolutionDir)\Debug\resource.res</resfile>
   <exefile>$(OutDir)\$(ProjectName).exe</exefile>
   <useStdLibPath>1</useStdLibPath>
   <cRuntime>2</cRuntime>
