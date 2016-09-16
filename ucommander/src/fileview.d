@@ -8,8 +8,8 @@ import std.utf;
 import winmain;
 import resource;
 
-nothrow
-{
+nothrow:
+
 int init_grippy(HWND hwnd,int idc)
 {
 	int result=FALSE;
@@ -163,4 +163,3 @@ int create_fileview(HWND hparent,HWND *hfview,int id)
 	return result;
 }
 
-}//nothrow
