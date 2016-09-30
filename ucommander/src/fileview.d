@@ -123,10 +123,10 @@ LRESULT file_view_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	switch(msg){
 		case WM_INITDIALOG:
 			{
-				const wchar *asterisk="\x3D\x27",downarrow="\x3D\x27";
+				const char *asterisk="\x3D\x27\0\0",downarrow="\xBC\x25\0\0";
 				resize_fileview(hwnd);
-				SetDlgItemTextW(hwnd,IDC_HOTLIST,asterisk); //0x273D asterisk
-				SetDlgItemTextW(hwnd,IDC_HISTORY,downarrow); //0x25BC downarrow
+				SetDlgItemTextW(hwnd,IDC_HOTLIST,cast(wchar*)asterisk); //0x273D asterisk
+				SetDlgItemTextW(hwnd,IDC_HISTORY,cast(wchar*)downarrow); //0x25BC downarrow
 			}
 			break;
 		case WM_DRAWITEM:
