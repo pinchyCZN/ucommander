@@ -14,6 +14,8 @@ import file_pane;
 //import test;
 import resource;
 
+enum epane_id{left,right};
+
 class MainWindow{
 	HWND hinstance;
 	HWND hwnd;
@@ -23,7 +25,8 @@ class MainWindow{
 	HWND hgrippy;
 	
 	enum esplit{vertical,horizontal};
-	esplit split=esplit.vertical;
+	esplit split_style=esplit.vertical;
+	float split_percent=.50;
 
 	FilePane fpane[2];
 
@@ -35,8 +38,9 @@ class MainWindow{
 			MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
 			return;
 		}
-		init_pane(hwnd,fpane[0]);
-		init_pane(hwnd,fpane[1]);
+		init_pane(hwnd,fpane[0],epane_id.left);
+		init_pane(hwnd,fpane[1],epane_id.right);
+		resize_panes;
 	}
 	nothrow
 	int load_menu(HWND hwnd,int menu_id){
@@ -48,9 +52,41 @@ class MainWindow{
 		}
 		return result;
 	}
-	int init_pane(HWND hwnd,ref FilePane fpane){
+	int init_pane(HWND hwnd,ref FilePane fpane,epane_id id){
 		int result=FALSE;
-		fpane=new FilePane(hinstance,hwnd);
+		fpane=new FilePane(hinstance,hwnd,id);
+		if(fpane.hwnd!=NULL)
+			result=TRUE;
+		return result;
+	}
+	int resize_panes(){
+		int result=FALSE;
+		int center;
+		int x1,y1,x2,y2;
+		int w1,h1,w2,h2;
+		RECT rect;
+		GetClientRect(hwnd,&rect);
+		if(split_style==esplit.horizontal){
+			int height=(rect.bottom-rect.top);
+			center=cast(int)(cast(float)height*split_percent);
+			x1=x2=0;
+			y1=0;
+			h1=center-3;
+			y2=center+3;
+			h2=height-y2;
+			w1=w2=rect.right-rect.left;
+		}
+		else{
+			int width=(rect.right-rect.left);
+			center=cast(int)(cast(float)width*split_percent);
+			x1=0;
+			y1=y2=0;
+			w1=
+			x2=width+3;
+			w2=width-x2;
+			h1=h2=rect.bottom-rect.top;
+		}
+
 		return result;
 	}
 }

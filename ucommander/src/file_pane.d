@@ -20,10 +20,12 @@ class FilePane{
 	HWND hpath;
 	HWND hhotlist;
 	HWND hhistory;
+	epane_id pane_id;
 	FileListView[] flviews;
-	this(HINSTANCE hinst,HWND hpwnd){
+	this(HINSTANCE hinst,HWND hpwnd,epane_id id){
 		hinstance=hinst;
 		hparent=hpwnd;
+		pane_id=id;
 		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)&this);
 		if(hwnd!=NULL){
 			struct CTRL_LIST{HWND *hwnd; int idc;};

@@ -17,6 +17,25 @@ class FileListView{
 	this(HINSTANCE hinst,HWND hpwnd){
 		hinstance=hinst;
 		hparent=hpwnd;
+		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_LVIEW),hparent,&lview_dlg_proc,cast(LPARAM)&this);
+		if(hwnd!=NULL){
 
+		}
 	}
+}
+
+
+nothrow
+extern (Windows)
+BOOL lview_dlg_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+{
+	switch(msg){
+		case WM_INITDIALOG:
+			break;
+		case WM_COMMAND:
+			break;
+		default:
+			break;
+	}
+	return 0;
 }

@@ -10,6 +10,7 @@
 #define IDC_EDIT1                       1001
 #define IDC_FILE_PATH                   1001
 #define IDC_LIST1                       1003
+#define IDC_LISTVIEW                    1003
 #define IDC_TAB_VIEW                    1004
 #define IDC_HOTLIST                     1005
 #define IDC_HISTORY                     1006

@@ -19,8 +19,10 @@ const IDD_LVIEW = 106;
 const IDC_EDIT1 = 1001;
 //C     #define IDC_LIST1                       1003
 const IDC_FILE_PATH = 1001;
-//C     #define IDC_TAB_VIEW                    1004
+//C     #define IDC_LISTVIEW                    1003
 const IDC_LIST1 = 1003;
+//C     #define IDC_TAB_VIEW                    1004
+const IDC_LISTVIEW = 1003;
 //C     #define IDC_HOTLIST                     1005
 const IDC_TAB_VIEW = 1004;
 //C     #define IDC_HISTORY                     1006
