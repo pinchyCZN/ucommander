@@ -28,7 +28,7 @@ class MainWindow{
 	esplit split_style=esplit.vertical;
 	float split_percent=.50;
 
-	FilePane fpane[2];
+	FilePane fpanes[2];
 
 	this(HINSTANCE hinst,int dlg_id){
 		LPARAM lparam;
@@ -38,9 +38,9 @@ class MainWindow{
 			MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
 			return;
 		}
-		init_pane(hwnd,fpane[0],epane_id.left);
-		init_pane(hwnd,fpane[1],epane_id.right);
-		resize_panes;
+		init_pane(hwnd,fpanes[0],epane_id.left);
+		init_pane(hwnd,fpanes[1],epane_id.right);
+		resize_panes();
 	}
 	nothrow
 	int load_menu(HWND hwnd,int menu_id){
@@ -81,12 +81,16 @@ class MainWindow{
 			center=cast(int)(cast(float)width*split_percent);
 			x1=0;
 			y1=y2=0;
-			w1=
-			x2=width+3;
+			w1=center-3;
+			x2=center+3;
 			w2=width-x2;
 			h1=h2=rect.bottom-rect.top;
 		}
-
+		if((fpanes[0] !is NULL) && (fpanes[1] !is NULL)){
+			SetWindowPos(fpanes[0].hwnd,NULL,x1,y1,w1,h1,SWP_NOZORDER);
+			SetWindowPos(fpanes[1].hwnd,NULL,x2,y2,w2,h2,SWP_NOZORDER);
+			result=TRUE;
+		}
 		return result;
 	}
 }

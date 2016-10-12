@@ -421,6 +421,7 @@ move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;" u
    <File path="src\file_pane.d" />
    <File path="src\test.d" />
    <File path="src\windows_etc.d" />
+   <File path="src\window_anchor.d" />
    <File path="src\winmain.d" />
   </Folder>
  </Folder>

@@ -8,6 +8,7 @@ import std.utf;
 import winmain;
 import resource;
 import file_lview;
+import window_anchor;
 
 nothrow:
 class FilePane{
@@ -59,12 +60,15 @@ extern (Windows)
 BOOL dlg_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
-		case WM_INITDIALOG:
-			break;
-		case WM_COMMAND:
-			break;
-		default:
-			break;
+	case WM_INITDIALOG:
+		break;
+	case WM_COMMAND:
+		break;
+	case WM_SIZE:
+	case WM_SIZING:
+		break;
+	default:
+		break;
 	}
 	return 0;
 }
