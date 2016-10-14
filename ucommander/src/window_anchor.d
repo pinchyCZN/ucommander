@@ -1,6 +1,7 @@
 module window_anchor;
 
 import core.sys.windows.windows;
+import resource;
 
 enum ANCHOR_LEFT=1;
 enum ANCHOR_RIGHT=2;
@@ -19,7 +20,14 @@ struct WIN_REL_POS{
 	WINDOWPLACEMENT parent,win;
 	int initialized;
 };
-
+/*
+CONTROL_ANCHOR[2] file_pane_anchor=[
+	[IDC_COMBO_DRIVE,
+	ANCHOR_LEFT|ANCHOR_TOP,
+	0,0,0
+	]
+];
+*/
 int anchor_init(HWND hparent,ref CONTROL_ANCHOR[] clist)
 {
 	int i;
