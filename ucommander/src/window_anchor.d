@@ -20,30 +20,25 @@ struct WIN_REL_POS{
 	WINDOWPLACEMENT parent,win;
 	int initialized;
 };
-/*
-CONTROL_ANCHOR[2] file_pane_anchor=[
-	[IDC_COMBO_DRIVE,
-	ANCHOR_LEFT|ANCHOR_TOP,
-	0,0,0
-	]
-];
-*/
+
 int anchor_init(HWND hparent,ref CONTROL_ANCHOR[] clist)
 {
 	int i;
 	RECT rparent={0};
 	GetClientRect(hparent,&rparent);
-	foreach(anchor;clist){
+	for(i=0;i<clist.length;i++){
 		HWND hctrl;
-		anchor.rect_parent=rparent;
-		hctrl=GetDlgItem(hparent,anchor.ctrl_id);
+		CONTROL_ANCHOR ca;
+		ca=clist[i];
+		ca.rect_parent=rparent;
+		hctrl=GetDlgItem(hparent,ca.ctrl_id);
 		if(hctrl){
 			RECT rctrl={0};
 			GetWindowRect(hctrl,&rctrl);
 			MapWindowPoints(NULL,hparent,cast(LPPOINT)&rctrl,2);
-			anchor.rect_ctrl=rctrl;
+			ca.rect_ctrl=rctrl;
 		}
-		anchor.initialized=1;
+		ca.initialized=1;
 	}
 	return 0;
 }

@@ -10,6 +10,19 @@ import resource;
 import file_lview;
 import window_anchor;
 
+CONTROL_ANCHOR[] file_pane_anchor=[
+	{IDC_COMBO_DRIVE,	ANCHOR_LEFT|ANCHOR_TOP},
+	{IDC_DRIVE_INFO,	ANCHOR_LEFT|ANCHOR_TOP},
+	{IDC_TAB_VIEW,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
+	{IDC_UP_DIR,		ANCHOR_RIGHT|ANCHOR_TOP},
+	{IDC_ROOT,			ANCHOR_RIGHT|ANCHOR_TOP},
+	{IDC_FILE_PATH,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
+	{IDC_HOTLIST,		ANCHOR_RIGHT|ANCHOR_TOP},
+	{IDC_HISTORY,		ANCHOR_RIGHT|ANCHOR_TOP},
+	{IDC_GRIPPY,		ANCHOR_RIGHT|ANCHOR_BOTTOM}
+];
+
+
 nothrow:
 class FilePane{
 	HINSTANCE hinstance;
@@ -43,6 +56,7 @@ class FilePane{
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
+			anchor_init(hwnd,file_pane_anchor);
 		}
 		init_tabs();
 	}
