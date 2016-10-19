@@ -28,7 +28,7 @@ class FilePane{
 		pane_id=id;
 		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)&this);
 		if(hwnd!=NULL){
-			struct CTRL_LIST{HWND *hwnd; int idc;};
+			struct CTRL_LIST{HWND *hwnd; int idc;}
 			CTRL_LIST[] ctrl_list=[
 				{&hlistdrives,	IDC_COMBO_DRIVE},
 				{&hdriveinfo,	IDC_DRIVE_INFO},
