@@ -28,7 +28,7 @@ class MainWindow{
 	esplit split_style=esplit.vertical;
 	float split_percent=.50;
 
-	FilePane fpanes[2];
+	FilePane[2] fpanes;
 
 	this(HINSTANCE hinst,int dlg_id){
 		LPARAM lparam;
