@@ -40,7 +40,7 @@ class FilePane{
 		hinstance=hinst;
 		hparent=hpwnd;
 		pane_id=id;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)&this);
+		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)cast(void*)this);
 		if(hwnd!=NULL){
 			struct CTRL_LIST{HWND *hwnd; int idc;}
 			CTRL_LIST[] ctrl_list=[

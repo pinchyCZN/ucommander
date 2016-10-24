@@ -33,7 +33,7 @@ class MainWindow{
 	this(HINSTANCE hinst,int dlg_id){
 		LPARAM lparam;
 		hinstance=hinst;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(dlg_id),NULL,&main_win_proc,cast(LPARAM)&this);
+		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(dlg_id),NULL,&main_win_proc,cast(LPARAM)cast(void*)this);
 		if(hwnd==NULL){
 			MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
 			return;
