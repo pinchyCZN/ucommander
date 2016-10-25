@@ -35,7 +35,7 @@ class MainWindow{
 	this(HINSTANCE hinst,int dlg_id){
 		LPARAM lparam;
 		hinstance=hinst;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(dlg_id),NULL,&main_win_proc,cast(LPARAM)&this);
+		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(dlg_id),NULL,&main_win_proc,cast(LPARAM)cast(void*)this);
 		if(hwnd==NULL){
 			MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
 			return;
@@ -105,8 +105,8 @@ BOOL main_win_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
 	case WM_INITDIALOG:
-		MainWindow *mwin=cast(MainWindow*)lparam;
-		if(mwin==NULL)
+		MainWindow mwin=cast(MainWindow)cast(void*)lparam;
+		if(mwin is null)
 			break;
 		mwin.load_menu(hwnd,IDR_MAIN_MENU);
 		//create_fileview(hwnd,&ghfileview1,0);
