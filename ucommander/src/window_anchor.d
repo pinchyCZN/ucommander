@@ -3,6 +3,8 @@ module window_anchor;
 import core.sys.windows.windows;
 import resource;
 
+nothrow:
+
 enum ANCHOR_LEFT=1;
 enum ANCHOR_RIGHT=2;
 enum ANCHOR_TOP=4;
@@ -28,8 +30,8 @@ int anchor_init(HWND hparent,ref CONTROL_ANCHOR[] clist)
 	GetClientRect(hparent,&rparent);
 	for(i=0;i<clist.length;i++){
 		HWND hctrl;
-		CONTROL_ANCHOR ca;
-		ca=clist[i];
+		CONTROL_ANCHOR *ca;
+		ca=&clist[i];
 		ca.rect_parent=rparent;
 		hctrl=GetDlgItem(hparent,ca.ctrl_id);
 		if(hctrl){

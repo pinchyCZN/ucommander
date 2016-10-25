@@ -17,7 +17,7 @@ class FileListView{
 	this(HINSTANCE hinst,HWND hpwnd){
 		hinstance=hinst;
 		hparent=hpwnd;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_LVIEW),hparent,&lview_dlg_proc,cast(LPARAM)cast(void*)this);
+		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_LVIEW),hparent,&lview_dlg_proc,cast(LPARAM)&this);
 		if(hwnd!=NULL){
 			struct CTRL_LIST{HWND *hwnd; int idc;}
 			CTRL_LIST[] ctrl_list=[

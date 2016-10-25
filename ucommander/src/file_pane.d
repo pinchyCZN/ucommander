@@ -5,25 +5,19 @@ import core.sys.windows.commctrl;
 import core.stdc.string;
 import std.string;
 import std.utf;
+import std.algorithm;
 import winmain;
 import resource;
 import file_lview;
 import window_anchor;
 
-CONTROL_ANCHOR[] file_pane_anchor=[
-	{IDC_COMBO_DRIVE,	ANCHOR_LEFT|ANCHOR_TOP},
-	{IDC_DRIVE_INFO,	ANCHOR_LEFT|ANCHOR_TOP},
-	{IDC_TAB_VIEW,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
-	{IDC_UP_DIR,		ANCHOR_RIGHT|ANCHOR_TOP},
-	{IDC_ROOT,			ANCHOR_RIGHT|ANCHOR_TOP},
-	{IDC_FILE_PATH,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
-	{IDC_HOTLIST,		ANCHOR_RIGHT|ANCHOR_TOP},
-	{IDC_HISTORY,		ANCHOR_RIGHT|ANCHOR_TOP},
-	{IDC_GRIPPY,		ANCHOR_RIGHT|ANCHOR_BOTTOM}
-];
-
-
 nothrow:
+private struct PaneTable{
+	FilePane fpane;
+	HWND hwnd;
+}
+PaneTable[] fptable;
+
 class FilePane{
 	HINSTANCE hinstance;
 	HWND hwnd,hparent;
@@ -34,13 +28,26 @@ class FilePane{
 	HWND hpath;
 	HWND hhotlist;
 	HWND hhistory;
+	HWND hgrippy;
 	epane_id pane_id;
 	FileListView[] flviews;
+	CONTROL_ANCHOR[] file_pane_anchor=[
+		{IDC_COMBO_DRIVE,	ANCHOR_LEFT|ANCHOR_TOP},
+		{IDC_DRIVE_INFO,	ANCHOR_LEFT|ANCHOR_TOP},
+		{IDC_TAB_VIEW,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
+		{IDC_UP_DIR,		ANCHOR_RIGHT|ANCHOR_TOP},
+		{IDC_ROOT,			ANCHOR_RIGHT|ANCHOR_TOP},
+		{IDC_FILE_PATH,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
+		{IDC_HOTLIST,		ANCHOR_RIGHT|ANCHOR_TOP},
+		{IDC_HISTORY,		ANCHOR_RIGHT|ANCHOR_TOP},
+		{IDC_GRIPPY,		ANCHOR_RIGHT|ANCHOR_BOTTOM}
+	];
+
 	this(HINSTANCE hinst,HWND hpwnd,epane_id id){
 		hinstance=hinst;
 		hparent=hpwnd;
 		pane_id=id;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)cast(void*)this);
+		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)&this);
 		if(hwnd!=NULL){
 			struct CTRL_LIST{HWND *hwnd; int idc;}
 			CTRL_LIST[] ctrl_list=[
@@ -51,14 +58,29 @@ class FilePane{
 				{&hbtnroot,		IDC_ROOT},
 				{&hpath,		IDC_FILE_PATH},
 				{&hhotlist,		IDC_HOTLIST},
-				{&hhistory,		IDC_HISTORY}
+				{&hhistory,		IDC_HISTORY},
+				{&hgrippy,		IDC_GRIPPY}
 			];
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
+			if(id==epane_id.right)
+				SetWindowLong(hgrippy,GWL_STYLE,GetWindowLong(hgrippy,GWL_STYLE)|SBS_SIZEGRIP);
+			else
+				ShowWindow(hgrippy,SW_HIDE);
+			fptable~=PaneTable(this,hwnd);
 			anchor_init(hwnd,file_pane_anchor);
 		}
 		init_tabs();
+	}
+	~this(){
+		int i;
+		for(i=0;i<fptable.length;i++){
+			if(hwnd==fptable[i].hwnd){
+				fptable=remove(fptable,i);
+				break;
+			}
+		}
 	}
 	int init_tabs(){
 		int result=FALSE;
@@ -68,6 +90,18 @@ class FilePane{
 
 }
 
+int get_fpane(HWND hwnd,ref FilePane fpane)
+{
+	int result=FALSE;
+	foreach(pane;fptable){
+		if(pane.hwnd==hwnd){
+			fpane=pane.fpane;
+			result=TRUE;
+			break;
+		}
+	}
+	return result;
+}
 
 nothrow
 extern (Windows)
@@ -80,6 +114,11 @@ BOOL dlg_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		break;
 	case WM_SIZE:
 	case WM_SIZING:
+		{
+			FilePane fp=null;
+			if(get_fpane(hwnd,fp))
+				anchor_resize(hwnd,fp.file_pane_anchor);
+		}
 		break;
 	default:
 		break;
