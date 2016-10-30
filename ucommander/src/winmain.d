@@ -10,10 +10,10 @@ import std.string;
 import std.utf;
 import std.stdio;
 import file_pane;
-//import windows_etc;
-//import test;
 import window_anchor;
+import windows_etc;
 import resource;
+import console;
 
 enum epane_id{left,right};
 
@@ -114,9 +114,13 @@ class MainWindow
 	int create_fpanel(HWND hparent)
 	{
 		int result=FALSE;
+/*
 		hfpanel=GetDlgItem(hparent,IDC_FILE_PANEL);
 		if(hfpanel!=NULL){
 			RECT rect;
+//			GetWindowRect(hfpanel,&rect);
+//			MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
+
 			GetClientRect(hfpanel,&rect);
 			DestroyWindow(hfpanel);
 			hfpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_PANEL),hparent,&fpanel_proc,cast(LPARAM)cast(void*)this);
@@ -128,10 +132,20 @@ class MainWindow
 				w=rect.right-rect.left;
 				h=rect.bottom-rect.top;
 				SetWindowPos(hfpanel,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
-				init_pane(hfpanel,fpanes[0],epane_id.left);
-				init_pane(hfpanel,fpanes[1],epane_id.right);
+				//init_pane(hfpanel,fpanes[0],epane_id.left);
+				//init_pane(hfpanel,fpanes[1],epane_id.right);
+				result=TRUE;
 			}
 		}
+*/
+		
+		if(replace_with_panel(hinstance,IDD_PANEL,IDC_FILE_PANEL,hparent,hfpanel,&fpanel_proc)){
+			init_pane(hfpanel,fpanes[0],epane_id.left);
+			init_pane(hfpanel,fpanes[1],epane_id.right);
+			ShowWindow(hfpanel,SW_SHOW);
+			result=TRUE;
+		}
+		
 		return result;
 	}
 	nothrow
@@ -245,7 +259,8 @@ int WinMain(HINSTANCE hinstance, HINSTANCE hprevinstance, LPSTR cmd_line, int cm
 	ctrls.dwSize=ctrls.sizeof;
     ctrls.dwICC=ICC_LISTVIEW_CLASSES;
 	InitCommonControlsEx(&ctrls);
-	
+
+	open_console();
 	main_win=new MainWindow(hinstance,IDD_MAIN_DLG);
 
 	ShowWindow(main_win.hwnd,SW_SHOW);

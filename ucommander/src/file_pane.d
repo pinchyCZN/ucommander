@@ -10,6 +10,8 @@ import winmain;
 import resource;
 import file_lview;
 import window_anchor;
+import windows_etc;
+
 
 nothrow:
 private struct PaneTable{
@@ -65,8 +67,9 @@ class FilePane{
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
 			fptable~=PaneTable(this,hwnd);
-			init_tabs();
+			init_tabs(hwnd);
 			anchor_init(hwnd,file_pane_anchor);
+			ShowWindow(hwnd,SW_SHOW);
 		}
 	}
 	~this(){
@@ -78,27 +81,11 @@ class FilePane{
 			}
 		}
 	}
-	int init_tabs(){
+	int init_tabs(HWND _hparent){
 		int result=FALSE;
-		RECT rect;
-		HWND htmp;
-		htmp=GetDlgItem(hwnd,IDC_LVIEW_PANEL);
-		if(htmp==NULL)
-			return result;
-		GetWindowRect(htmp,&rect);
-		MapWindowPoints(NULL,htmp,cast(POINT*)&rect,2);
-		DestroyWindow(htmp);
-		hlviewpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_PANEL),hwnd,&lview_pane_proc,cast(LPARAM)cast(void*)this);
-		if(htmp!=NULL){
-			int x,y,w,h;
-			SetWindowLong(htmp,GWL_ID,IDC_LVIEW_PANEL);
-			x=rect.left;
-			y=rect.top;
-			w=rect.right-rect.left;
-			h=rect.bottom-rect.top;
-			SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
-			flviews~=new FileListView(hinstance,htmp);
-			ShowWindow(htmp,SW_SHOW);
+		if(replace_with_panel(hinstance,IDD_PANEL,IDC_LVIEW_PANEL,_hparent,hlviewpanel,&lview_pane_proc)){
+			//flviews~=new FileListView(hinstance,hlviewpanel);
+			ShowWindow(hlviewpanel,SW_SHOW);
 			result=TRUE;
 		}
 		return result;
