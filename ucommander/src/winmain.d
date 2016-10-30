@@ -12,27 +12,36 @@ import std.stdio;
 import file_pane;
 //import windows_etc;
 //import test;
+import window_anchor;
 import resource;
 
 enum epane_id{left,right};
 
 private MainWindow mwin=null;
 
-class MainWindow{
+class MainWindow
+{
 	HWND hinstance;
 	HWND hwnd;
 	HWND hmenu;
+	HWND hfpanel;
 	HWND hsplit;
 	HWND hcmd_info,hcommand;
 	HWND hgrippy;
-	
+	CONTROL_ANCHOR[] main_win_achor=[
+		{IDC_CMD_PATH,		ANCHOR_LEFT|ANCHOR_BOTTOM},
+		{IDC_CMD_EDIT,		ANCHOR_LEFT|ANCHOR_BOTTOM},
+		{IDC_GRIPPY,		ANCHOR_RIGHT|ANCHOR_BOTTOM},
+		{IDC_FILE_PANEL,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM},
+	];
 	enum esplit{vertical,horizontal};
 	esplit split_style=esplit.vertical;
 	float split_percent=.50;
 
 	FilePane[2] fpanes;
 
-	this(HINSTANCE hinst,int dlg_id){
+	this(HINSTANCE hinst,int dlg_id)
+	{
 		LPARAM lparam;
 		hinstance=hinst;
 		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(dlg_id),NULL,&main_win_proc,cast(LPARAM)cast(void*)this);
@@ -40,35 +49,117 @@ class MainWindow{
 			MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
 			return;
 		}
-		init_pane(hwnd,fpanes[0],epane_id.left);
-		init_pane(hwnd,fpanes[1],epane_id.right);
-		resize_panes();
+		load_menu(hwnd,IDR_MAIN_MENU);
+		init_grippy(hwnd,IDC_GRIPPY);
+		create_fpanel(hwnd);
+		anchor_init(hwnd,main_win_achor);
+		resize_main_win();
 	}
 	nothrow
-	int load_menu(HWND hwnd,int menu_id){
+	int load_menu(HWND hparent,int menu_id)
+	{
 		int result=FALSE;
 		HMENU hmenu=LoadMenu(hinstance,MAKEINTRESOURCE(menu_id));
 		if(hmenu!=NULL){
-			SetMenu(hwnd,hmenu);
+			RECT rect;
+			int delta;
+			GetClientRect(hparent,&rect);
+			delta=rect.bottom-rect.top;
+			SetMenu(hparent,hmenu);
+			GetClientRect(hparent,&rect);
+			delta-=rect.bottom-rect.top;
+			if(delta<0)
+				delta=0;
+			foreach(idc;[IDC_CMD_PATH,IDC_CMD_EDIT,IDC_GRIPPY]){
+				HWND htmp=GetDlgItem(hwnd,idc);
+				int x,y;
+				GetWindowRect(htmp,&rect);
+				MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
+				x=rect.left;
+				y=rect.top-delta;
+				SetWindowPos(htmp,NULL,x,y,0,0,SWP_NOSIZE|SWP_NOZORDER);
+			}
+			{
+				int x,y,w,h;
+				HWND htmp;
+				htmp=GetDlgItem(hwnd,IDC_FILE_PANEL);
+				GetWindowRect(htmp,&rect);
+				MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
+				x=rect.left;
+				y=rect.top;
+				w=rect.right-rect.left;
+				h=rect.bottom-rect.top-delta;
+				SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER);
+			}
 			result=TRUE;
 		}
 		return result;
 	}
-	int init_pane(HWND hwnd,ref FilePane fpane,epane_id id){
+	int init_pane(HWND hparent,ref FilePane fpane,epane_id id)
+	{
 		int result=FALSE;
-		fpane=new FilePane(hinstance,hwnd,id);
+		fpane=new FilePane(hinstance,hparent,id);
 		if(fpane.hwnd!=NULL)
 			result=TRUE;
 		return result;
 	}
-	nothrow
-	int resize_panes(){
+	int init_grippy(HWND hparent,int idc)
+	{
 		int result=FALSE;
+		HWND hgrippy;
+		LONG style;
+		if(hparent==NULL)
+			return result;
+		hgrippy=GetDlgItem(hparent,idc);
+		if(hgrippy==NULL)
+			return result;
+		style=WS_CHILD|WS_VISIBLE|SBS_SIZEGRIP;
+		result=SetWindowLong(hgrippy,GWL_STYLE,style);
+		return result;
+	}
+	int create_fpanel(HWND hparent)
+	{
+		int result=FALSE;
+		hfpanel=GetDlgItem(hparent,IDC_FILE_PANEL);
+		if(hfpanel!=NULL){
+			RECT rect;
+			GetClientRect(hfpanel,&rect);
+			DestroyWindow(hfpanel);
+			hfpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANEL),hparent,&fpanel_proc,cast(LPARAM)cast(void*)this);
+			if(hfpanel!=NULL){
+				int x,y,w,h;
+				SetWindowLong(hfpanel,GWL_ID,IDC_FILE_PANEL);
+				x=rect.left;
+				y=rect.top;
+				w=rect.right-rect.left;
+				h=rect.bottom-rect.top;
+				SetWindowPos(hfpanel,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
+				init_pane(hfpanel,fpanes[0],epane_id.left);
+				init_pane(hfpanel,fpanes[1],epane_id.right);
+			}
+		}
+		return result;
+	}
+	nothrow
+	int resize_main_win()
+	{
+		anchor_resize(hwnd,main_win_achor);
+		resize_panes();
+		return TRUE;
+	}
+	nothrow
+	int resize_panes()
+	{
+		int result=FALSE;
+		HWND hparent;
 		int center;
 		int x1,y1,x2,y2;
 		int w1,h1,w2,h2;
 		RECT rect;
-		GetClientRect(hwnd,&rect);
+		hparent=hfpanel;
+		if(hparent==NULL)
+			return result;
+		GetClientRect(hparent,&rect);
 		if(split_style==esplit.horizontal){
 			int height=(rect.bottom-rect.top);
 			center=cast(int)(cast(float)height*split_percent);
@@ -97,7 +188,18 @@ class MainWindow{
 		return result;
 	}
 }
-
+nothrow
+extern (Windows)
+BOOL fpanel_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+{
+	switch(msg){
+	case WM_INITDIALOG:
+		break;
+	default:
+		break;
+	}
+	return FALSE;
+}
 
 nothrow
 extern (Windows)
@@ -105,10 +207,12 @@ BOOL main_win_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
 	case WM_INITDIALOG:
+		/*
 		MainWindow mwin=cast(MainWindow)cast(void*)lparam;
 		if(mwin is null)
 			break;
 		mwin.load_menu(hwnd,IDR_MAIN_MENU);
+		*/
 		//create_fileview(hwnd,&ghfileview1,0);
 		//create_fileview(hwnd,&ghfileview2,0);
 		break;
@@ -124,7 +228,7 @@ BOOL main_win_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_SIZE:
 	case WM_SIZING:
 		if(main_win!is null)
-			main_win.resize_panes();
+			main_win.resize_main_win();
 		break;
 	default:
 		break;

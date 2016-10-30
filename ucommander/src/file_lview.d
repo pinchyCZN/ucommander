@@ -7,6 +7,7 @@ import std.string;
 import std.utf;
 import winmain;
 import resource;
+import file_list;
 
 nothrow:
 class FileListView{
@@ -14,6 +15,8 @@ class FileListView{
 	HWND hwnd,hparent;
 	HWND hlview;
 	HWND hinfo;
+	string path;
+	FileEntry[] files;
 	this(HINSTANCE hinst,HWND hpwnd){
 		hinstance=hinst;
 		hparent=hpwnd;

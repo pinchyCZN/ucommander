@@ -7,8 +7,10 @@
 #define IDR_MAIN_MENU                   103
 #define IDD_FILE_PANE                   105
 #define IDD_LVIEW                       106
+#define IDD_FILE_PANEL                  107
 #define IDC_EDIT1                       1001
 #define IDC_FILE_PATH                   1001
+#define IDC_CMD_EDIT                    1001
 #define IDC_LIST1                       1003
 #define IDC_LISTVIEW                    1003
 #define IDC_TAB_VIEW                    1004
@@ -21,6 +23,9 @@
 #define IDC_UP_DIR                      1012
 #define IDC_                            1013
 #define IDC_ROOT                        1013
+#define IDC_CMD_PATH                    1015
+#define IDC_BUTTON1                     1016
+#define IDC_FILE_PANEL                  1017
 #define ID_FILE_CHANGEATTRIBUTES        40001
 #define ID_FILE_PROPERTIES              40002
 
@@ -28,9 +33,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        107
+#define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40003
-#define _APS_NEXT_CONTROL_VALUE         1014
+#define _APS_NEXT_CONTROL_VALUE         1018
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

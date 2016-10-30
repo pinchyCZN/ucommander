@@ -28,7 +28,6 @@ class FilePane{
 	HWND hpath;
 	HWND hhotlist;
 	HWND hhistory;
-	HWND hgrippy;
 	epane_id pane_id;
 	FileListView[] flviews;
 	CONTROL_ANCHOR[] file_pane_anchor=[
@@ -58,16 +57,11 @@ class FilePane{
 				{&hbtnroot,		IDC_ROOT},
 				{&hpath,		IDC_FILE_PATH},
 				{&hhotlist,		IDC_HOTLIST},
-				{&hhistory,		IDC_HISTORY},
-				{&hgrippy,		IDC_GRIPPY}
+				{&hhistory,		IDC_HISTORY}
 			];
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
-			if(id==epane_id.right)
-				SetWindowLong(hgrippy,GWL_STYLE,GetWindowLong(hgrippy,GWL_STYLE)|SBS_SIZEGRIP);
-			else
-				ShowWindow(hgrippy,SW_HIDE);
 			fptable~=PaneTable(this,hwnd);
 			anchor_init(hwnd,file_pane_anchor);
 		}
@@ -124,21 +118,6 @@ BOOL dlg_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 		break;
 	}
 	return 0;
-}
-
-int init_grippy(HWND hwnd,int idc)
-{
-	int result=FALSE;
-	HWND hgrippy;
-	LONG style;
-	if(hwnd==NULL)
-		return result;
-	hgrippy=GetDlgItem(hwnd,idc);
-	if(hgrippy==NULL)
-		return result;
-	style=WS_CHILD|WS_VISIBLE|SBS_SIZEGRIP;
-	result=SetWindowLong(hgrippy,GWL_STYLE,style);
-	return result;
 }
 
 int resize_fileview(HWND hwnd)

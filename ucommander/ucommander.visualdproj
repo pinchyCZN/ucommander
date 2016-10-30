@@ -417,6 +417,7 @@ htod &quot;$(InputPath)&quot;
 echo move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;
 move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;" uptodateWithSameTime="true" outfile="src\resource\resource.d" />
    </Folder>
+   <File path="src\file_list.d" />
    <File path="src\file_lview.d" />
    <File path="src\file_pane.d" />
    <File path="src\test.d" />
