@@ -8,6 +8,7 @@
 #define IDD_FILE_PANE                   105
 #define IDD_LVIEW                       106
 #define IDD_FILE_PANEL                  107
+#define IDD_PANEL                       107
 #define IDC_EDIT1                       1001
 #define IDC_FILE_PATH                   1001
 #define IDC_CMD_EDIT                    1001
@@ -24,7 +25,7 @@
 #define IDC_                            1013
 #define IDC_ROOT                        1013
 #define IDC_CMD_PATH                    1015
-#define IDC_BUTTON1                     1016
+#define IDC_LVIEW_PANEL                 1016
 #define IDC_FILE_PANEL                  1017
 #define ID_FILE_CHANGEATTRIBUTES        40001
 #define ID_FILE_PROPERTIES              40002

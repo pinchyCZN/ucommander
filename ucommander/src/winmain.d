@@ -70,26 +70,20 @@ class MainWindow
 			delta-=rect.bottom-rect.top;
 			if(delta<0)
 				delta=0;
-			foreach(idc;[IDC_CMD_PATH,IDC_CMD_EDIT,IDC_GRIPPY]){
+			foreach(idc;[IDC_CMD_PATH,IDC_CMD_EDIT,IDC_GRIPPY,IDC_FILE_PANEL]){
 				HWND htmp=GetDlgItem(hwnd,idc);
-				int x,y;
+				int x,y,h,w;
+				int flag=SWP_NOSIZE|SWP_NOZORDER;
 				GetWindowRect(htmp,&rect);
 				MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
 				x=rect.left;
 				y=rect.top-delta;
-				SetWindowPos(htmp,NULL,x,y,0,0,SWP_NOSIZE|SWP_NOZORDER);
-			}
-			{
-				int x,y,w,h;
-				HWND htmp;
-				htmp=GetDlgItem(hwnd,IDC_FILE_PANEL);
-				GetWindowRect(htmp,&rect);
-				MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
-				x=rect.left;
-				y=rect.top;
-				w=rect.right-rect.left;
-				h=rect.bottom-rect.top-delta;
-				SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER);
+				if(idc==IDC_FILE_PANEL){
+					flag=SWP_NOZORDER;
+					w=rect.right-rect.left;
+					h=rect.bottom-rect.top-delta;
+				}
+				SetWindowPos(htmp,NULL,x,y,w,h,flag);
 			}
 			result=TRUE;
 		}
@@ -125,7 +119,7 @@ class MainWindow
 			RECT rect;
 			GetClientRect(hfpanel,&rect);
 			DestroyWindow(hfpanel);
-			hfpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANEL),hparent,&fpanel_proc,cast(LPARAM)cast(void*)this);
+			hfpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_PANEL),hparent,&fpanel_proc,cast(LPARAM)cast(void*)this);
 			if(hfpanel!=NULL){
 				int x,y,w,h;
 				SetWindowLong(hfpanel,GWL_ID,IDC_FILE_PANEL);

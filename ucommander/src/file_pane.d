@@ -28,6 +28,7 @@ class FilePane{
 	HWND hpath;
 	HWND hhotlist;
 	HWND hhistory;
+	HWND hlviewpanel;
 	epane_id pane_id;
 	FileListView[] flviews;
 	CONTROL_ANCHOR[] file_pane_anchor=[
@@ -39,7 +40,7 @@ class FilePane{
 		{IDC_FILE_PATH,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
 		{IDC_HOTLIST,		ANCHOR_RIGHT|ANCHOR_TOP},
 		{IDC_HISTORY,		ANCHOR_RIGHT|ANCHOR_TOP},
-		{IDC_GRIPPY,		ANCHOR_RIGHT|ANCHOR_BOTTOM}
+		{IDC_LVIEW_PANEL,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM}
 	];
 
 	this(HINSTANCE hinst,HWND hpwnd,epane_id id){
@@ -57,15 +58,16 @@ class FilePane{
 				{&hbtnroot,		IDC_ROOT},
 				{&hpath,		IDC_FILE_PATH},
 				{&hhotlist,		IDC_HOTLIST},
-				{&hhistory,		IDC_HISTORY}
+				{&hhistory,		IDC_HISTORY},
+				{&hlviewpanel,	IDC_LVIEW_PANEL}
 			];
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
 			fptable~=PaneTable(this,hwnd);
+			init_tabs();
 			anchor_init(hwnd,file_pane_anchor);
 		}
-		init_tabs();
 	}
 	~this(){
 		int i;
@@ -78,7 +80,27 @@ class FilePane{
 	}
 	int init_tabs(){
 		int result=FALSE;
-		flviews~=new FileListView(hinstance,hwnd);
+		RECT rect;
+		HWND htmp;
+		htmp=GetDlgItem(hwnd,IDC_LVIEW_PANEL);
+		if(htmp==NULL)
+			return result;
+		GetWindowRect(htmp,&rect);
+		MapWindowPoints(NULL,htmp,cast(POINT*)&rect,2);
+		DestroyWindow(htmp);
+		hlviewpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_PANEL),hwnd,&lview_pane_proc,cast(LPARAM)cast(void*)this);
+		if(htmp!=NULL){
+			int x,y,w,h;
+			SetWindowLong(htmp,GWL_ID,IDC_LVIEW_PANEL);
+			x=rect.left;
+			y=rect.top;
+			w=rect.right-rect.left;
+			h=rect.bottom-rect.top;
+			SetWindowPos(htmp,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
+			flviews~=new FileListView(hinstance,htmp);
+			ShowWindow(htmp,SW_SHOW);
+			result=TRUE;
+		}
 		return result;
 	}
 
@@ -95,6 +117,12 @@ int get_fpane(HWND hwnd,ref FilePane fpane)
 		}
 	}
 	return result;
+}
+nothrow
+extern (Windows)
+BOOL lview_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
+{
+	return FALSE;
 }
 
 nothrow

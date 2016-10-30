@@ -30,6 +30,7 @@ class FileListView{
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
+			ShowWindow(hwnd,SW_SHOW);
 		}
 	}
 }
