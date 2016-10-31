@@ -84,7 +84,7 @@ class FilePane{
 	int init_tabs(HWND _hparent){
 		int result=FALSE;
 		if(replace_with_panel(hinstance,IDD_PANEL,IDC_LVIEW_PANEL,_hparent,hlviewpanel,&lview_pane_proc)){
-			//flviews~=new FileListView(hinstance,hlviewpanel);
+			flviews~=new FileListView(hinstance,hlviewpanel);
 			ShowWindow(hlviewpanel,SW_SHOW);
 			result=TRUE;
 		}

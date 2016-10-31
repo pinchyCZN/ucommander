@@ -33,11 +33,8 @@ int replace_with_panel(HINSTANCE hinstance,
 	htmp=GetDlgItem(hparent,idc);
 	if(htmp!=NULL){
 		RECT rect;
-		RECT prect;
 		GetClientRect(htmp,&rect);
-		GetClientRect(hparent,&prect);
-		//GetWindowRect(htmp,&rect);
-		//MapWindowPoints(hparent,htmp,cast(POINT*)&rect,2);
+		MapWindowPoints(htmp,hparent,cast(POINT*)&rect,2);
 		DestroyWindow(htmp);
 		hpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(idd),hparent,dlg_proc,0);
 		if(hpanel!=NULL){
@@ -47,11 +44,26 @@ int replace_with_panel(HINSTANCE hinstance,
 			y=rect.top;
 			w=rect.right-rect.left;
 			h=rect.bottom-rect.top;
-			x-=prect.left;
-			y-=prect.top;
 			SetWindowPos(hpanel,NULL,x,y,w,h,SWP_NOZORDER);
 			result=TRUE;
 		}
 	}
 	return result;
+}
+
+void print_rect(HWND hwnd,string prefix)
+{
+	import std.stdio;
+	RECT wrect,mrect,rect;
+	string tab="";
+	GetClientRect(hwnd,&rect);
+	GetWindowRect(hwnd,&wrect);
+
+	if(prefix.length>0){
+		writeln(prefix);
+	}
+	writef("\tx=%.4s winx=%.4s\n",rect.left,wrect.left);
+	writef("\ty=%.4s winy=%.4s\n",rect.top,wrect.top);
+	writef("\tw=%.4s winw=%.4s\n",rect.right-rect.left,wrect.right-wrect.left);
+	writef("\th=%.4s winh=%.4s\n",rect.bottom-rect.top,wrect.bottom-wrect.top);
 }

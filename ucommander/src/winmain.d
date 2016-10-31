@@ -74,12 +74,12 @@ class MainWindow
 				HWND htmp=GetDlgItem(hwnd,idc);
 				int x,y,h,w;
 				int flag=SWP_NOSIZE|SWP_NOZORDER;
-				GetWindowRect(htmp,&rect);
-				MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
+				GetClientRect(htmp,&rect);
+				MapWindowPoints(htmp,hparent,cast(POINT*)&rect,2);
 				x=rect.left;
 				y=rect.top-delta;
 				if(idc==IDC_FILE_PANEL){
-					flag=SWP_NOZORDER;
+					flag=SWP_NOZORDER|SWP_NOMOVE;
 					w=rect.right-rect.left;
 					h=rect.bottom-rect.top-delta;
 				}
@@ -93,8 +93,9 @@ class MainWindow
 	{
 		int result=FALSE;
 		fpane=new FilePane(hinstance,hparent,id);
-		if(fpane.hwnd!=NULL)
+		if(fpane.hwnd!=NULL){
 			result=TRUE;
+		}
 		return result;
 	}
 	int init_grippy(HWND hparent,int idc)
@@ -261,9 +262,12 @@ int WinMain(HINSTANCE hinstance, HINSTANCE hprevinstance, LPSTR cmd_line, int cm
 	InitCommonControlsEx(&ctrls);
 
 	open_console();
+	set_console_size(120,80,800);
 	main_win=new MainWindow(hinstance,IDD_MAIN_DLG);
 
 	ShowWindow(main_win.hwnd,SW_SHOW);
+	move_console(1920,0);
+
 	while(GetMessage(&msg,NULL,0,0))
 	{
 		if(!IsDialogMessage(main_win.hwnd,&msg)){
