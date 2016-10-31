@@ -14,11 +14,11 @@ import windows_etc;
 
 
 nothrow:
-private struct PaneTable{
+private struct PaneEntry{
 	FilePane fpane;
 	HWND hwnd;
 }
-PaneTable[] fptable;
+PaneEntry[] fptable;
 
 class FilePane{
 	HINSTANCE hinstance;
@@ -66,7 +66,7 @@ class FilePane{
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
-			fptable~=PaneTable(this,hwnd);
+			fptable~=PaneEntry(this,hwnd);
 			init_tabs(hwnd);
 			anchor_init(hwnd,file_pane_anchor);
 			ShowWindow(hwnd,SW_SHOW);

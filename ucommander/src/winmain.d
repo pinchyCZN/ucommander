@@ -115,31 +115,6 @@ class MainWindow
 	int create_fpanel(HWND hparent)
 	{
 		int result=FALSE;
-/*
-		hfpanel=GetDlgItem(hparent,IDC_FILE_PANEL);
-		if(hfpanel!=NULL){
-			RECT rect;
-//			GetWindowRect(hfpanel,&rect);
-//			MapWindowPoints(NULL,hparent,cast(POINT*)&rect,2);
-
-			GetClientRect(hfpanel,&rect);
-			DestroyWindow(hfpanel);
-			hfpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_PANEL),hparent,&fpanel_proc,cast(LPARAM)cast(void*)this);
-			if(hfpanel!=NULL){
-				int x,y,w,h;
-				SetWindowLong(hfpanel,GWL_ID,IDC_FILE_PANEL);
-				x=rect.left;
-				y=rect.top;
-				w=rect.right-rect.left;
-				h=rect.bottom-rect.top;
-				SetWindowPos(hfpanel,NULL,x,y,w,h,SWP_NOZORDER|SWP_SHOWWINDOW);
-				//init_pane(hfpanel,fpanes[0],epane_id.left);
-				//init_pane(hfpanel,fpanes[1],epane_id.right);
-				result=TRUE;
-			}
-		}
-*/
-		
 		if(replace_with_panel(hinstance,IDD_PANEL,IDC_FILE_PANEL,hparent,hfpanel,&fpanel_proc)){
 			init_pane(hfpanel,fpanes[0],epane_id.left);
 			init_pane(hfpanel,fpanes[1],epane_id.right);
