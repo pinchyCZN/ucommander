@@ -45,11 +45,12 @@ class FilePane{
 		{IDC_LVIEW_PANEL,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM}
 	];
 
-	this(HINSTANCE hinst,HWND hpwnd,epane_id id){
+	this(HINSTANCE hinst,HWND hpwnd,epane_id id,int panel_idc){
 		hinstance=hinst;
 		hparent=hpwnd;
 		pane_id=id;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_FILE_PANE),hparent,&dlg_pane_proc,cast(LPARAM)cast(void*)this);
+		hwnd=NULL;
+		replace_with_panel(hinstance,IDD_FILE_PANE,panel_idc,hparent,hwnd,&dlg_pane_proc);
 		if(hwnd!=NULL){
 			struct CTRL_LIST{HWND *hwnd; int idc;}
 			CTRL_LIST[] ctrl_list=[
@@ -67,8 +68,8 @@ class FilePane{
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
 			fptable~=PaneEntry(this,hwnd);
-			init_tabs(hwnd);
 			anchor_init(hwnd,file_pane_anchor);
+			init_tabs(hwnd);
 			ShowWindow(hwnd,SW_SHOW);
 		}
 	}
@@ -83,11 +84,11 @@ class FilePane{
 	}
 	int init_tabs(HWND _hparent){
 		int result=FALSE;
-		if(replace_with_panel(hinstance,IDD_PANEL,IDC_LVIEW_PANEL,_hparent,hlviewpanel,&lview_pane_proc)){
-			flviews~=new FileListView(hinstance,hlviewpanel);
-			ShowWindow(hlviewpanel,SW_SHOW);
+		FileListView flv=new FileListView(hinstance,_hparent,IDC_LVIEW_PANEL);
+		flviews~=flv;
+		hlviewpanel=flv.hwnd;
+		if(hlviewpanel!=NULL)
 			result=TRUE;
-		}
 		return result;
 	}
 
@@ -104,12 +105,6 @@ int get_fpane(HWND hwnd,ref FilePane fpane)
 		}
 	}
 	return result;
-}
-nothrow
-extern (Windows)
-BOOL lview_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
-{
-	return FALSE;
 }
 
 nothrow

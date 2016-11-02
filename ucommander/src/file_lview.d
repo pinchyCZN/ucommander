@@ -8,6 +8,7 @@ import std.utf;
 import std.algorithm;
 import winmain;
 import window_anchor;
+import windows_etc;
 import resource;
 import file_list;
 
@@ -29,10 +30,11 @@ class FileListView{
 		{IDC_LISTVIEW,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM},
 		{IDC_FILE_INFO,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_BOTTOM}
 	];
-	this(HINSTANCE hinst,HWND hpwnd){
+	this(HINSTANCE hinst,HWND hpwnd,int panel_idc){
 		hinstance=hinst;
 		hparent=hpwnd;
-		hwnd=CreateDialogParam(hinstance,MAKEINTRESOURCE(IDD_LVIEW),hparent,&lview_dlg_proc,cast(LPARAM)cast(void*)this);
+		hwnd=NULL;
+		replace_with_panel(hinstance,IDD_LVIEW,panel_idc,hparent,hwnd,&lview_dlg_proc);
 		if(hwnd!=NULL){
 			struct CTRL_LIST{HWND *hwnd; int idc;}
 			CTRL_LIST[] ctrl_list=[
@@ -43,6 +45,7 @@ class FileListView{
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
 			}
 			lvtable~=LViewEntry(this,hwnd);
+			anchor_init(hwnd,lview_anchor);
 			ShowWindow(hwnd,SW_SHOW);
 		}
 	}

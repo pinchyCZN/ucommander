@@ -38,13 +38,11 @@ int replace_with_panel(HINSTANCE hinstance,
 		DestroyWindow(htmp);
 		hpanel=CreateDialogParam(hinstance,MAKEINTRESOURCE(idd),hparent,dlg_proc,0);
 		if(hpanel!=NULL){
-			int x,y,w,h;
+			int x,y;
 			SetWindowLong(hpanel,GWL_ID,idc);
 			x=rect.left;
 			y=rect.top;
-			w=rect.right-rect.left;
-			h=rect.bottom-rect.top;
-			SetWindowPos(hpanel,NULL,x,y,w,h,SWP_NOZORDER);
+			SetWindowPos(hpanel,NULL,x,y,0,0,SWP_NOZORDER|SWP_NOSIZE);
 			result=TRUE;
 		}
 	}

@@ -24,15 +24,14 @@ class MainWindow
 	HWND hinstance;
 	HWND hwnd;
 	HWND hmenu;
-	HWND hfpanel;
+	HWND hpanel_left,hpanel_right;
 	HWND hsplit;
 	HWND hcmd_info,hcommand;
 	HWND hgrippy;
 	CONTROL_ANCHOR[] main_win_achor=[
-		{IDC_CMD_PATH,		ANCHOR_LEFT|ANCHOR_BOTTOM},
-		{IDC_CMD_EDIT,		ANCHOR_LEFT|ANCHOR_BOTTOM},
-		{IDC_GRIPPY,		ANCHOR_RIGHT|ANCHOR_BOTTOM},
-		{IDC_FILE_PANEL,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM},
+		{IDC_CMD_PATH,			ANCHOR_LEFT|ANCHOR_BOTTOM},
+		{IDC_CMD_EDIT,			ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_BOTTOM},
+		{IDC_GRIPPY,			ANCHOR_RIGHT|ANCHOR_BOTTOM}
 	];
 	enum esplit{vertical,horizontal};
 	esplit split_style=esplit.vertical;
@@ -40,6 +39,20 @@ class MainWindow
 
 	FilePane[2] fpanes;
 
+	void get_handles(HWND hparent)
+	{
+		struct CTRL_LIST{HWND *hwnd; int idc;}
+		CTRL_LIST[] ctrl_list=[
+			{&hpanel_left,	IDC_FILE_PANEL_LEFT},
+			{&hpanel_right,	IDC_FILE_PANEL_RIGHT},
+			{&hcmd_info,	IDC_CMD_PATH},
+			{&hcommand,		IDC_CMD_EDIT},
+			{&hgrippy,		IDC_GRIPPY}
+		];
+		foreach(ctrl;ctrl_list){
+			*ctrl.hwnd=GetDlgItem(hparent,ctrl.idc);
+		}
+	}
 	this(HINSTANCE hinst,int dlg_id)
 	{
 		LPARAM lparam;
@@ -49,10 +62,11 @@ class MainWindow
 			MessageBox(NULL,"Unable to create window","ERROR",MB_OK|MB_SYSTEMMODAL);
 			return;
 		}
+		get_handles(hwnd);
 		load_menu(hwnd,IDR_MAIN_MENU);
 		init_grippy(hwnd,IDC_GRIPPY);
-		create_fpanel(hwnd);
 		anchor_init(hwnd,main_win_achor);
+		create_fpanels(hwnd);
 		resize_main_win();
 	}
 	nothrow
@@ -70,7 +84,8 @@ class MainWindow
 			delta-=rect.bottom-rect.top;
 			if(delta<0)
 				delta=0;
-			foreach(idc;[IDC_CMD_PATH,IDC_CMD_EDIT,IDC_GRIPPY,IDC_FILE_PANEL]){
+			foreach(idc;[IDC_CMD_PATH,IDC_CMD_EDIT,IDC_GRIPPY,IDC_FILE_PANEL_LEFT,IDC_FILE_PANEL_RIGHT]){
+				import std.algorithm.comparison;
 				HWND htmp=GetDlgItem(hwnd,idc);
 				int x,y,h,w;
 				int flag=SWP_NOSIZE|SWP_NOZORDER;
@@ -78,8 +93,9 @@ class MainWindow
 				MapWindowPoints(htmp,hparent,cast(POINT*)&rect,2);
 				x=rect.left;
 				y=rect.top-delta;
-				if(idc==IDC_FILE_PANEL){
-					flag=SWP_NOZORDER|SWP_NOMOVE;
+				if(idc.among(IDC_FILE_PANEL_LEFT,IDC_FILE_PANEL_RIGHT)){
+					flag=SWP_NOZORDER;
+					y+=delta;
 					w=rect.right-rect.left;
 					h=rect.bottom-rect.top-delta;
 				}
@@ -89,10 +105,24 @@ class MainWindow
 		}
 		return result;
 	}
-	int init_pane(HWND hparent,ref FilePane fpane,epane_id id)
+	int create_fpanels(HWND hparent)
 	{
 		int result=FALSE;
-		fpane=new FilePane(hinstance,hparent,id);
+		struct CTRL_LIST{HWND *hwnd; int idc; epane_id eid;}
+		CTRL_LIST[] ctrl_list=[
+			{&hpanel_left,	IDC_FILE_PANEL_LEFT,	epane_id.left},
+			{&hpanel_right,	IDC_FILE_PANEL_RIGHT,	epane_id.right}
+		];
+		foreach(i,ref ctrl;ctrl_list){
+			if(init_pane(hparent,fpanes[i],ctrl.idc,ctrl.eid))
+				*ctrl.hwnd=fpanes[i].hwnd;
+		}
+		return result;
+	}
+	int init_pane(HWND hparent,ref FilePane fpane,int idc,epane_id id)
+	{
+		int result=FALSE;
+		fpane=new FilePane(hinstance,hparent,id,idc);
 		if(fpane.hwnd!=NULL){
 			result=TRUE;
 		}
@@ -112,18 +142,6 @@ class MainWindow
 		result=SetWindowLong(hgrippy,GWL_STYLE,style);
 		return result;
 	}
-	int create_fpanel(HWND hparent)
-	{
-		int result=FALSE;
-		if(replace_with_panel(hinstance,IDD_PANEL,IDC_FILE_PANEL,hparent,hfpanel,&fpanel_proc)){
-			init_pane(hfpanel,fpanes[0],epane_id.left);
-			init_pane(hfpanel,fpanes[1],epane_id.right);
-			ShowWindow(hfpanel,SW_SHOW);
-			result=TRUE;
-		}
-		
-		return result;
-	}
 	nothrow
 	int resize_main_win()
 	{
@@ -135,17 +153,24 @@ class MainWindow
 	int resize_panes()
 	{
 		int result=FALSE;
+		int bottom_y;
+		{
+			RECT rect;
+			GetClientRect(hcommand,&rect);
+			MapWindowPoints(hcommand,hwnd,cast(LPPOINT)&rect,2);
+			bottom_y=rect.top;
+		}
 		HWND hparent;
 		int center;
 		int x1,y1,x2,y2;
 		int w1,h1,w2,h2;
 		RECT rect;
-		hparent=hfpanel;
+		hparent=hwnd;
 		if(hparent==NULL)
 			return result;
 		GetClientRect(hparent,&rect);
 		if(split_style==esplit.horizontal){
-			int height=(rect.bottom-rect.top);
+			int height=bottom_y;
 			center=cast(int)(cast(float)height*split_percent);
 			x1=x2=0;
 			y1=0;
@@ -153,8 +178,10 @@ class MainWindow
 			y2=center+3;
 			h2=height-y2;
 			w1=w2=rect.right-rect.left;
+			SetWindowPos(hpanel_left,NULL,x1,y1,w1,h1,SWP_NOZORDER);
+			SetWindowPos(hpanel_right,NULL,x2,y2,w2,h2,SWP_NOZORDER);
 		}
-		else{
+		else{ //vertical
 			int width=(rect.right-rect.left);
 			center=cast(int)(cast(float)width*split_percent);
 			x1=0;
@@ -162,27 +189,12 @@ class MainWindow
 			w1=center-3;
 			x2=center+3;
 			w2=width-x2;
-			h1=h2=rect.bottom-rect.top;
-		}
-		if((fpanes[0] !is NULL) && (fpanes[1] !is NULL)){
-			SetWindowPos(fpanes[0].hwnd,NULL,x1,y1,w1,h1,SWP_NOZORDER);
-			SetWindowPos(fpanes[1].hwnd,NULL,x2,y2,w2,h2,SWP_NOZORDER);
-			result=TRUE;
+			h1=h2=bottom_y;
+			SetWindowPos(hpanel_left,NULL,x1,y1,w1,h1,SWP_NOZORDER);
+			SetWindowPos(hpanel_right,NULL,x2,y2,w2,h2,SWP_NOZORDER);
 		}
 		return result;
 	}
-}
-nothrow
-extern (Windows)
-BOOL fpanel_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
-{
-	switch(msg){
-	case WM_INITDIALOG:
-		break;
-	default:
-		break;
-	}
-	return FALSE;
 }
 
 nothrow
