@@ -1,5 +1,5 @@
 <DProject>
- <ProjectGuid>{87735DF7-1362-4BCF-A14C-963400CEBA01}</ProjectGuid>
+ <ProjectGuid>{E1632624-2E6C-4D85-A23C-640E9F4E7153}</ProjectGuid>
  <Config name="Debug" platform="Win32">
   <obj>0</obj>
   <link>0</link>
@@ -37,8 +37,8 @@
   <useInline>0</useInline>
   <release>0</release>
   <preservePaths>0</preservePaths>
-  <warnings>1</warnings>
-  <infowarnings>1</infowarnings>
+  <warnings>0</warnings>
+  <infowarnings>0</infowarnings>
   <checkProperty>0</checkProperty>
   <genStackFrame>0</genStackFrame>
   <pic>0</pic>
@@ -72,7 +72,7 @@
   <debuglevel>0</debuglevel>
   <debugids />
   <versionlevel>0</versionlevel>
-  <versionids>UNICODE</versionids>
+  <versionids />
   <dump_source>0</dump_source>
   <mapverbosity>0</mapverbosity>
   <createImplib>0</createImplib>
@@ -91,8 +91,8 @@
   <linkswitches />
   <libfiles>ole32.lib kernel32.lib user32.lib comctl32.lib comdlg32.lib</libfiles>
   <libpaths />
-  <deffile>$(SolutionDir)\src\win_link.def</deffile>
-  <resfile>$(SolutionDir)\Debug\resource.res</resfile>
+  <deffile>$(ProjectDir)\win_link.def</deffile>
+  <resfile />
   <exefile>$(OutDir)\$(ProjectName).exe</exefile>
   <useStdLibPath>1</useStdLibPath>
   <cRuntime>2</cRuntime>
@@ -408,23 +408,7 @@
   <postBuildCommand />
   <filesToClean>*.obj;*.cmd;*.build;*.json;*.dep</filesToClean>
  </Config>
- <Folder name="ucommander">
-  <Folder name="src">
-   <Folder name="resource">
-    <File path="src\resource\resource.d" />
-    <File tool="Custom" path="src\resource\resource.h" dependencies="src\resource\resource.rc" customcmd="echo htod &quot;$(InputPath)&quot;
-htod &quot;$(InputPath)&quot;
-echo move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;
-move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;" uptodateWithSameTime="true" outfile="src\resource\resource.d" />
-   </Folder>
-   <File path="src\console.d" />
-   <File path="src\file_list.d" />
-   <File path="src\file_lview.d" />
-   <File path="src\file_pane.d" />
-   <File path="src\test.d" />
-   <File path="src\windows_etc.d" />
-   <File path="src\window_anchor.d" />
-   <File path="src\winmain.d" />
-  </Folder>
+ <Folder name="WindowsApp1">
+  <File path="__winmain.d" />
  </Folder>
 </DProject>

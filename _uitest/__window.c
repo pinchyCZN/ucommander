@@ -55,10 +55,8 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-//int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow )
-__declspec(noinline)
-int
-WinMainCRTStartup(void)
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow )
+//__declspec(noinline) int WinMainCRTStartup(void)
 {
 	
 	MSG msg;    
@@ -66,9 +64,10 @@ WinMainCRTStartup(void)
 	const TCHAR *class_name=TEXT("TEST");
 	HWND hwnd;
 	int style;
-	//hinstance=hInstance;
-	hinstance=0x400000;
-	//InitCommonControls();	
+	int *ptr=0x400000;
+	int protect;
+	hinstance=hInstance;
+	//hinstance=0x400000;
 	wc.lpszClassName = class_name;
 	wc.hInstance     = hinstance ;
 	wc.lpfnWndProc   = WndProc ;
