@@ -47,7 +47,7 @@ LRESULT WndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 				int style;
 				htmp=CreateWindow("BUTTON","BUTTON",WS_VISIBLE|WS_CHILD|BS_PUSHBUTTON,0,0,100,100,hwnd,cast(void*)2000,hinstance,NULL);
 				htmp=CreateWindow("EDIT","EDIT",WS_VISIBLE|WS_CHILD|ES_READONLY,0,100,100,100,hwnd,cast(void*)2001,hinstance,NULL);
-				style=GetWindowLong(hwnd,GWL_STYLE);
+				style=GetWindowLong(htmp,GWL_STYLE);
 				style=style;
 			}
 			break;
@@ -80,9 +80,16 @@ LRESULT WndProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 			break;
 	}
 	//return FALSE;
+	if(msg==WM_CTLCOLORBTN)
+		msg=msg;
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+nothrow
+extern (Windows)
+int function (int *,int *,int)SetSysColorsTemp;
+
+nothrow
 int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	MSG msg;    
@@ -90,8 +97,27 @@ int myWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int
 	const TCHAR *class_name="TEST";
 	HWND hwnd;
 	int style;
+	HINSTANCE hlib;
+	hlib=LoadLibrary("USER32.DLL");
+	if(hlib!=NULL){
+		int[0x1e] colors;
+		int[0x1e] table;
+		foreach(i,ref c;colors){
+			c=GetSysColor(i);
+			//if(i>=4 && i<=5)
+			if(i==COLOR_WINDOW)
+				c=0xFFFFFF;
+			//COLOR_GRAYTEXT
+			table[i]=i;
+		}
+		SetSysColorsTemp=cast(typeof(SetSysColorsTemp))GetProcAddress(hlib,"SetSysColorsTemp");
+		//if(SetSysColorsTemp)
+		//	SetSysColorsTemp(cast(int*)&colors,cast(int*)&table,0x1E);
+		table[0]=COLOR_WINDOW;
+		colors[0]=0xFFFFFF;
+		//SetSysColors(1,cast(int*)table,cast(uint*)colors);
+	}
 	hinstance=hInstance;
-	InitCommonControls();
 
 	wc.lpszClassName = class_name;
 	wc.hInstance     = hInstance ;
