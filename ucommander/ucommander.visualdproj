@@ -425,6 +425,7 @@ move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;" u
    <File path="src\windows_etc.d" />
    <File path="src\window_anchor.d" />
    <File path="src\winmain.d" />
+   <File path="src\worker_thread_module.d" />
   </Folder>
  </Folder>
 </DProject>
