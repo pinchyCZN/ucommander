@@ -30,7 +30,7 @@ class MainWindow
 	HWND hcmd_info,hcommand;
 	HWND hgrippy;
 	DWORD thread_id;
-	HANDLE hevent;
+	WORKER_CONTROL wctrl;
 	CONTROL_ANCHOR[] main_win_achor=[
 		{IDC_CMD_PATH,			ANCHOR_LEFT|ANCHOR_BOTTOM},
 		{IDC_CMD_EDIT,			ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_BOTTOM},
@@ -71,11 +71,9 @@ class MainWindow
 		anchor_init(hwnd,main_win_achor);
 		create_fpanels(hwnd);
 		resize_main_win();
-		hevent=CreateEvent(NULL,FALSE,FALSE,"WORKER_THREAD_EVENT");
-		if(hevent!=NULL){
+		if(initialize_worker_control(wctrl))
+			CreateThread(NULL,0,&worker_thread,NULL,cast(DWORD)&wctrl,&thread_id);
 
-			CreateThread(NULL,0,&worker_thread,NULL,0,&thread_id);
-		}
 	}
 	nothrow
 	int load_menu(HWND hparent,int menu_id)

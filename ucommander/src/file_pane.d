@@ -115,6 +115,17 @@ BOOL dlg_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_INITDIALOG:
 		break;
 	case WM_COMMAND:
+		switch(LOWORD(wparam)){
+			case IDC_UP_DIR:
+			{
+				int i;
+				i++;
+			}
+			//writeln("234234");
+				break;
+			default:
+				break;
+		}
 		break;
 	case WM_SIZE:
 	case WM_SIZING:
