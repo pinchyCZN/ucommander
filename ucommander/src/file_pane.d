@@ -11,6 +11,7 @@ import resource;
 import file_lview;
 import window_anchor;
 import windows_etc;
+import worker_thread_module;
 
 
 nothrow:
@@ -117,6 +118,7 @@ BOOL dlg_pane_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 	case WM_COMMAND:
 		switch(LOWORD(wparam)){
 			case IDC_UP_DIR:
+				add_work_task(COMMAND.CMD_RENAME_FILE,"","");
 			{
 				int i;
 				i++;

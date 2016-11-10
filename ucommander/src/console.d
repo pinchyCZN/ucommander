@@ -17,7 +17,7 @@ void open_console()
 		hcrt=_open_osfhandle(cast(long)GetStdHandle(STD_OUTPUT_HANDLE),_O_TEXT);
 		if(hcrt!=0){
 			stdout.fdopen(hcrt,"w");
-			stdout.setvbuf(_IONBF,0);
+			stdout.setvbuf(0,_IONBF);
 			consolecreated=TRUE;
 		}
 	}

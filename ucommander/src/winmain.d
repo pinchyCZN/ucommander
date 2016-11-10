@@ -18,8 +18,6 @@ import console;
 
 enum epane_id{left,right};
 
-private MainWindow mwin=null;
-
 class MainWindow
 {
 	HWND hinstance;
@@ -29,7 +27,6 @@ class MainWindow
 	HWND hsplit;
 	HWND hcmd_info,hcommand;
 	HWND hgrippy;
-	DWORD thread_id;
 	WORKER_CONTROL wctrl;
 	CONTROL_ANCHOR[] main_win_achor=[
 		{IDC_CMD_PATH,			ANCHOR_LEFT|ANCHOR_BOTTOM},
@@ -72,7 +69,7 @@ class MainWindow
 		create_fpanels(hwnd);
 		resize_main_win();
 		if(initialize_worker_control(wctrl))
-			CreateThread(NULL,0,&worker_thread,NULL,cast(DWORD)&wctrl,&thread_id);
+			wctrl.hthread=CreateThread(NULL,0,&worker_thread,cast(void*)&wctrl,0,&wctrl.thread_id);
 
 	}
 	nothrow
@@ -240,7 +237,7 @@ BOOL main_win_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 
 
 
-MainWindow main_win;
+__gshared MainWindow main_win;
 
 extern (Windows)
 int WinMain(HINSTANCE hinstance, HINSTANCE hprevinstance, LPSTR cmd_line, int cmd_show)

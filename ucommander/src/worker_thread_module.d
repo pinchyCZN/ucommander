@@ -4,6 +4,7 @@ import core.runtime;
 import core.sys.windows.windows;
 import core.sys.windows.commctrl;
 import std.string;
+import std.stdio;
 import winmain;
 
 enum COMMAND{
@@ -14,29 +15,42 @@ struct WORK_TASK{
 	string param1,param2;
 }
 struct WORKER_CONTROL{
+	HANDLE hthread;
 	HANDLE hevent;
+	DWORD thread_id;
 	int cancel;
 	int exit;
 	CRITICAL_SECTION cs;
 	WORK_TASK[] tasks;
 }
-int add_work_task(ref WORKER_CONTROL wc,COMMAND cmd,string param1,string param2)
+nothrow
+int add_work_task(COMMAND cmd,string param1,string param2)
 {
-	EnterCriticalSection(&wc.cs);
-	wc.tasks~=WORK_TASK(cmd,param1,param2);
-	LeaveCriticalSection(&wc.cs);
-	return 0;
+	alias mwin=main_win;
+	int result=false;
+	if(mwin is null)
+		return result;
+	EnterCriticalSection(&mwin.wctrl.cs);
+	mwin.wctrl.tasks~=WORK_TASK(cmd,param1,param2);
+	LeaveCriticalSection(&mwin.wctrl.cs);
+	SetEvent(mwin.wctrl.hevent);
+	result=true;
+	return result;
 }
-int get_work_task(WORKER_CONTROL *wc,ref WORK_TASK wt)
+int get_work_task(ref WORK_TASK wt)
 {
-	int result=FALSE;
-	EnterCriticalSection(&wc.cs);
-	if(wc.tasks.length>0){
-		wt=wc.tasks[0];
-		wc.tasks=wc.tasks[1..wc.tasks.length];
+	alias mwin=main_win;
+	int result=false;
+
+	if(main_win is null)
+		return result;
+	EnterCriticalSection(&mwin.wctrl.cs);
+	if(mwin.wctrl.tasks.length>0){
+		wt=mwin.wctrl.tasks[0];
+		mwin.wctrl.tasks=mwin.wctrl.tasks[1..mwin.wctrl.tasks.length];
 		result=TRUE;
 	}
-	LeaveCriticalSection(&wc.cs);
+	LeaveCriticalSection(&mwin.wctrl.cs);
 	return result;
 }
 int initialize_worker_control(ref WORKER_CONTROL wc)
@@ -53,7 +67,7 @@ int process_task(WORKER_CONTROL *wc)
 {
 	int result=FALSE;
 	WORK_TASK wt;
-	if(!get_work_task(wc,wt))
+	if(!get_work_task(wt))
 		return result;
 	switch(wt.cmd){
 	default:
