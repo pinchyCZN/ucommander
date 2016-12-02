@@ -6,8 +6,10 @@ import core.sys.windows.commctrl;
 import std.string;
 import std.stdio;
 import winmain;
+import misc_tasks;
 
 enum COMMAND{
+	CMD_LOAD_SETTINGS,
 	CMD_RENAME_FILE
 };
 struct WORK_TASK{
@@ -70,6 +72,9 @@ int process_task(WORKER_CONTROL *wc)
 	if(!get_work_task(wt))
 		return result;
 	switch(wt.cmd){
+	case COMMAND.CMD_LOAD_SETTINGS:
+		load_settings();		
+		break;
 	default:
 		break;
 	}

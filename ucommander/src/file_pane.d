@@ -5,6 +5,7 @@ import core.sys.windows.commctrl;
 import core.stdc.string;
 import std.string;
 import std.utf;
+import std.conv;
 import std.algorithm;
 import winmain;
 import resource;
@@ -90,6 +91,20 @@ class FilePane{
 		hlviewpanel=flv.hwnd;
 		if(hlviewpanel!=NULL)
 			result=TRUE;
+		return result;
+	}
+	int add_tab(uint pos,const wstring caption){
+		int result=-1;
+		int count;
+		count=TabCtrl_GetItemCount(htab);
+		if(count>=0){
+			wstring tmp;
+			TC_ITEM tci;
+			tmp=caption[0..min(caption.length,40)]~"\0";
+			tci.mask=TCIF_TEXT;
+			tci.pszText=cast(wchar*)tmp;
+			result=TabCtrl_InsertItem(htab,pos,&tci);
+		}
 		return result;
 	}
 

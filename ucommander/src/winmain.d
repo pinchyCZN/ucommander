@@ -68,8 +68,9 @@ class MainWindow
 		anchor_init(hwnd,main_win_achor);
 		create_fpanels(hwnd);
 		resize_main_win();
-		if(initialize_worker_control(wctrl))
+		if(initialize_worker_control(wctrl)){
 			wctrl.hthread=CreateThread(NULL,0,&worker_thread,cast(void*)&wctrl,0,&wctrl.thread_id);
+		}
 
 	}
 	nothrow
@@ -206,10 +207,10 @@ BOOL main_win_proc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 {
 	switch(msg){
 	case WM_INITDIALOG:
-		/*
 		MainWindow mwin=cast(MainWindow)cast(void*)lparam;
 		if(mwin is null)
 			break;
+		/*
 		mwin.load_menu(hwnd,IDR_MAIN_MENU);
 		*/
 		//create_fileview(hwnd,&ghfileview1,0);
@@ -257,6 +258,7 @@ int WinMain(HINSTANCE hinstance, HINSTANCE hprevinstance, LPSTR cmd_line, int cm
 
 	ShowWindow(main_win.hwnd,SW_SHOW);
 	move_console(1920,0);
+	add_work_task(COMMAND.CMD_LOAD_SETTINGS,"","");
 
 	while(GetMessage(&msg,NULL,0,0))
 	{
