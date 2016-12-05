@@ -22,6 +22,10 @@ private struct PaneEntry{
 }
 PaneEntry[] fptable;
 
+struct FileTab{
+	
+}
+
 class FilePane{
 	HINSTANCE hinstance;
 	HWND hwnd,hparent;
@@ -34,7 +38,7 @@ class FilePane{
 	HWND hhistory;
 	HWND hlviewpanel;
 	epane_id pane_id;
-	FileListView[] flviews;
+	FileListView flview;
 	CONTROL_ANCHOR[] file_pane_anchor=[
 		{IDC_COMBO_DRIVE,	ANCHOR_LEFT|ANCHOR_TOP},
 		{IDC_DRIVE_INFO,	ANCHOR_LEFT|ANCHOR_TOP},
@@ -71,7 +75,7 @@ class FilePane{
 			}
 			fptable~=PaneEntry(this,hwnd);
 			anchor_init(hwnd,file_pane_anchor);
-			init_tabs(hwnd);
+			create_lview(hwnd);
 			ShowWindow(hwnd,SW_SHOW);
 		}
 	}
@@ -84,11 +88,10 @@ class FilePane{
 			}
 		}
 	}
-	int init_tabs(HWND _hparent){
+	int create_lview(HWND _hparent){
 		int result=FALSE;
-		FileListView flv=new FileListView(hinstance,_hparent,IDC_LVIEW_PANEL);
-		flviews~=flv;
-		hlviewpanel=flv.hwnd;
+		flview=new FileListView(hinstance,_hparent,IDC_LVIEW_PANEL);
+		hlviewpanel=flview.hwnd;
 		if(hlviewpanel!=NULL)
 			result=TRUE;
 		return result;
