@@ -39,14 +39,14 @@ const IDC_GRIPPY = 1011;
 const IDC_UP_DIR = 1012;
 //C     #define IDC_CMD_PATH                    1015
 const IDC_ROOT = 1013;
-//C     #define IDC_LVIEW_PANEL                 1016
-const IDC_CMD_PATH = 1015;
 //C     #define IDC_FILE_PANEL_LEFT             1017
-const IDC_LVIEW_PANEL = 1016;
+const IDC_CMD_PATH = 1015;
 //C     #define IDC_FILE_PANEL_RIGHT            1018
 const IDC_FILE_PANEL_LEFT = 1017;
-//C     #define ID_FILE_CHANGEATTRIBUTES        40001
+//C     #define IDC_SPLITTER                    1019
 const IDC_FILE_PANEL_RIGHT = 1018;
+//C     #define ID_FILE_CHANGEATTRIBUTES        40001
+const IDC_SPLITTER = 1019;
 //C     #define ID_FILE_PROPERTIES              40002
 const ID_FILE_CHANGEATTRIBUTES = 40001;
 
@@ -57,7 +57,7 @@ const ID_FILE_PROPERTIES = 40002;
 //C     #ifndef APSTUDIO_READONLY_SYMBOLS
 //C     #define _APS_NEXT_RESOURCE_VALUE        108
 //C     #define _APS_NEXT_COMMAND_VALUE         40003
-//C     #define _APS_NEXT_CONTROL_VALUE         1019
+//C     #define _APS_NEXT_CONTROL_VALUE         1023
 //C     #define _APS_NEXT_SYMED_VALUE           101
 //C     #endif
 //C     #endif

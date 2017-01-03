@@ -9,7 +9,6 @@ import std.conv;
 import std.algorithm;
 import winmain;
 import resource;
-import file_lview;
 import window_anchor;
 import windows_etc;
 import worker_thread_module;
@@ -38,7 +37,6 @@ class FilePane{
 	HWND hhistory;
 	HWND hlviewpanel;
 	epane_id pane_id;
-	FileListView flview;
 	CONTROL_ANCHOR[] file_pane_anchor=[
 		{IDC_COMBO_DRIVE,	ANCHOR_LEFT|ANCHOR_TOP},
 		{IDC_DRIVE_INFO,	ANCHOR_LEFT|ANCHOR_TOP},
@@ -48,7 +46,8 @@ class FilePane{
 		{IDC_FILE_PATH,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP},
 		{IDC_HOTLIST,		ANCHOR_RIGHT|ANCHOR_TOP},
 		{IDC_HISTORY,		ANCHOR_RIGHT|ANCHOR_TOP},
-		{IDC_LVIEW_PANEL,	ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM}
+		{IDC_LISTVIEW,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_TOP|ANCHOR_BOTTOM},
+		{IDC_FILE_INFO,		ANCHOR_LEFT|ANCHOR_RIGHT|ANCHOR_BOTTOM}
 	];
 
 	this(HINSTANCE hinst,HWND hpwnd,epane_id id,int panel_idc){
@@ -75,7 +74,6 @@ class FilePane{
 			}
 			fptable~=PaneEntry(this,hwnd);
 			anchor_init(hwnd,file_pane_anchor);
-			create_lview(hwnd);
 			ShowWindow(hwnd,SW_SHOW);
 		}
 	}
@@ -87,14 +85,6 @@ class FilePane{
 				break;
 			}
 		}
-	}
-	int create_lview(HWND _hparent){
-		int result=FALSE;
-		flview=new FileListView(hinstance,_hparent,IDC_LVIEW_PANEL);
-		hlviewpanel=flview.hwnd;
-		if(hlviewpanel!=NULL)
-			result=TRUE;
-		return result;
 	}
 	int add_tab(uint pos,const wstring caption){
 		int result=-1;

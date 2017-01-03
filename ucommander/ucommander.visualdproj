@@ -419,7 +419,6 @@ move &quot;$(ProjectDir)\resource.d&quot;  &quot;$(InputDir)\resource.d&quot;" u
    </Folder>
    <File path="src\console.d" />
    <File path="src\file_list.d" />
-   <File path="src\file_lview.d" />
    <File path="src\file_pane.d" />
    <File path="src\misc_tasks.d" />
    <File path="src\test.d" />
