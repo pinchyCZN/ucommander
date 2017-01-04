@@ -35,7 +35,7 @@ class FilePane{
 	HWND hpath;
 	HWND hhotlist;
 	HWND hhistory;
-	HWND hlviewpanel;
+	HWND hlistview;
 	epane_id pane_id;
 	CONTROL_ANCHOR[] file_pane_anchor=[
 		{IDC_COMBO_DRIVE,	ANCHOR_LEFT|ANCHOR_TOP},
@@ -67,7 +67,7 @@ class FilePane{
 				{&hpath,		IDC_FILE_PATH},
 				{&hhotlist,		IDC_HOTLIST},
 				{&hhistory,		IDC_HISTORY},
-				{&hlviewpanel,	IDC_LVIEW_PANEL}
+				{&hlistview,	IDC_LISTVIEW}
 			];
 			foreach(ctrl;ctrl_list){
 				*ctrl.hwnd=GetDlgItem(hwnd,ctrl.idc);
